@@ -1,14 +1,55 @@
-title: Alexis Aïnouz
-description: Site personnel
-url: https://alexisainouz.com
+# ─────────────────────────────────────────────────────────────────────
+#  TOUT CE QUI SE MODIFIE SOUVENT EST DANS CE FICHIER.
+#  Les liens n'existent qu'ici : ils s'affichent sur l'accueil ET dans
+#  le pied de page de toutes les pages, y compris tes outils du /lab.
+# ─────────────────────────────────────────────────────────────────────
 
-# Jekyll tourne nativement sur GitHub Pages : les fichiers .md sont rendus en HTML
-# à chaque push, et les .html bruts (les jouets du /lab) sont recopiés tels quels.
+title: Alexis Aïnouz
+description: Cook, maker, filmmaker. Founder of SALUT.
+url: https://alexisainouz.com
+lang: en
+
+profile:
+  photo: /assets/alex.jpg        # image fixe : 1re frame + vignette de partage
+  video: /assets/alex.mp4        # laisse vide ("") pour n'afficher que l'image fixe
+  name: Alexis Aïnouz
+  line: >-
+    Une phrase. Celle qui dit ce que tu fais et pour qui.
+    À écrire — c'est l'étape du 30/06.
+
+# Liens de l'accueil, dans l'ordre d'affichage.
+# Colle les vraies URL à la place des chaînes vides.
+links:
+  - label: YouTube
+    note: Alex
+    url: "https://www.youtube.com/@FrenchGuyCooking"
+  - label: Instagram
+    note: "@frenchguycooking"
+    url: "https://www.instagram.com/frenchguycooking/"
+  - label: LinkedIn
+    note: Professional background
+    url: "https://www.linkedin.com/in/alexis-gabriel-a%C3%AFnouz-31b5b614/"
+  - label: The book
+    note: "Just a French Guy Cooking"
+    url: /book/
+
+# Liens secondaires : pied de page et page contact uniquement.
+links_secondary:
+  - label: Malt
+    note: Freelance profile
+    url: "https://www.malt.fr/profile/alexisgabrielainouz"
+
+# ─────────────────────────────────────────────────────────────────────
+
 defaults:
-  - scope:
-      path: ""
-    values:
-      layout: default
+  - scope: { path: "" }
+    values: { layout: default }
+
+# Jekyll ignore les dossiers commençant par un point. Cette ligne le force
+# à publier .well-known/ — nécessaire le jour où une app mobile aura besoin
+# de liens universels (apple-app-site-association, assetlinks.json).
+include:
+  - .well-known
 
 exclude:
   - README.md

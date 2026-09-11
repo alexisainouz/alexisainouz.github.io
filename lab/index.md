@@ -1,25 +1,30 @@
 ---
 title: Lab
 permalink: /lab/
+description: Small tools I built, mostly about food.
 ---
 
 # Lab
 
-<p class="lede">Des outils fabriqués pour résoudre un problème précis, souvent le mien.
-Certains touchent à la cuisine. Pas tous.</p>
+<p class="lede">Small tools I built to solve a specific problem — usually my own.
+Some are about food. Not all of them.</p>
 
 <ul class="toys">
-  <li class="empty">Le premier outil arrive ici.</li>
+  <li class="empty">First tool goes here.</li>
 </ul>
 
 <!--
-  Pour ajouter un jouet :
-  1. déposer le fichier dans lab/nom-du-jouet/index.html (HTML brut, aucune contrainte —
-     Jekyll recopie tel quel les fichiers sans en-tête)
-  2. ajouter une ligne ici :
+  AJOUTER UN OUTIL
+  ────────────────
+  1. Crée le dossier  lab/nom-de-loutil/  et mets ton fichier dedans
+     sous le nom  index.html
+     C'est du HTML brut : aucun gabarit, aucune contrainte, Jekyll le
+     recopie tel quel. L'URL sera  alexisainouz.com/lab/nom-de-loutil/
 
-  <li><a href="/lab/nom-du-jouet/">
-        <span class="name">Nom du jouet</span>
-        <span class="what">Ce qu'il fait, en une ligne.</span>
+  2. Remplace la ligne "First tool goes here" par, pour chaque outil :
+
+  <li><a href="/lab/nom-de-loutil/">
+        <span class="name">Pizza dough calculator</span>
+        <span class="what">What it does, in one line.</span>
       </a></li>
 -->

@@ -1,31 +1,41 @@
 ---
+home: true
 permalink: /
 ---
 
-# La phrase centrale du site vient ici.
+<section class="hero">
+  <div class="hero-frame">
+    {% if site.profile.video != "" %}
+    <video class="hero-media" autoplay muted loop playsinline
+           poster="{{ site.profile.photo | relative_url }}"
+           aria-label="{{ site.profile.name }}">
+      <source src="{{ site.profile.video | relative_url }}" type="video/mp4">
+      <img src="{{ site.profile.photo | relative_url }}" alt="{{ site.profile.name }}">
+    </video>
+    {% else %}
+    <img class="hero-media" src="{{ site.profile.photo | relative_url }}" alt="{{ site.profile.name }}">
+    {% endif %}
 
-<p class="lede">Et la ligne en dessous, celle qui la précise en une respiration.</p>
+    <div class="hero-type">
+      <h1>{{ site.profile.name }}</h1>
+      <p class="hero-line">{{ site.profile.line }}</p>
+    </div>
+  </div>
+</section>
 
-<div class="todo">
-<strong>À écrire.</strong> C'est l'étape posée le 30 juin et toujours ouverte. Tout le
-reste du site se déduit de cette phrase — ne pas la bâcler pour avancer plus vite.
-</div>
+<section class="hero-links">
+  <ul class="linklist">
+  {% for l in site.links %}
+    {% if l.url != "" %}
+    <li><a href="{{ l.url }}"{% unless l.url == '/book/' %} rel="me noopener" target="_blank"{% endunless %}>
+      <span class="label">{{ l.label }}</span>
+      {% if l.note != "" %}<span class="note">{{ l.note }}</span>{% endif %}
+    </a></li>
+    {% else %}
+    <li class="pending"><span class="label">{{ l.label }}</span><span class="note">URL à coller dans _config.yml</span></li>
+    {% endif %}
+  {% endfor %}
+  </ul>
 
-## Repères
-
-<div class="todo">
-<strong>À vérifier et compléter par Alex.</strong> Les éléments ci-dessous viennent du
-dossier interne. Aucun chiffre n'est publié tant qu'il n'est pas confirmé.
-</div>
-
-- **French Guy Cooking** — chaîne YouTube, ~2M abonnés *(chiffre à confirmer)*
-- **SALUT** — ustensiles de cuisine en cuivre, fondateur
-- **Milk Street** — correspondant récurrent
-- **Livre de cuisine** — *(titre, éditeur, année, ventes à renseigner)*
-
-## Sélection
-
-<div class="todo">
-<strong>À choisir.</strong> Trois à cinq réalisations, détaillées. SALUT, GOLIATH,
-Milk Street sont les candidats identifiés dans le cadrage.
-</div>
+  <p class="more"><a href="{{ '/about/' | relative_url }}">More about my work</a> · <a href="{{ '/lab/' | relative_url }}">Tools I built</a></p>
+</section>

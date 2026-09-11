@@ -1,18 +1,31 @@
 <!doctype html>
-<html lang="fr">
+<html lang="{{ site.lang }}">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{% if page.title %}{{ page.title }} — {% endif %}{{ site.title }}</title>
 <meta name="description" content="{{ page.description | default: site.description }}">
+<link rel="canonical" href="{{ page.url | absolute_url }}">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="{% if page.title %}{{ page.title }} — {% endif %}{{ site.title }}">
+<meta property="og:description" content="{{ page.description | default: site.description }}">
+<meta property="og:url" content="{{ page.url | absolute_url }}">
+<meta property="og:image" content="{{ site.profile.photo | absolute_url }}">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap">
 <link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
 </head>
-<body>
+<body{% if page.home %} class="is-home"{% endif %}>
+
 <header class="site">
-  <a class="wordmark" href="{{ '/' | relative_url }}">Alexis Aïnouz</a>
+  <a class="wordmark" href="{{ '/' | relative_url }}">{{ site.profile.name }}</a>
   <nav>
-    <a href="{{ '/parcours/' | relative_url }}">Parcours</a>
-    <a href="{{ '/lab/' | relative_url }}">Lab</a>
+    <a href="{{ '/about/'   | relative_url }}">About</a>
+    <a href="{{ '/lab/'     | relative_url }}">Lab</a>
     <a href="{{ '/contact/' | relative_url }}">Contact</a>
   </nav>
 </header>
@@ -20,7 +33,23 @@
 <main>{{ content }}</main>
 
 <footer class="site">
-  <p>© {{ site.time | date: "%Y" }} Alexis Aïnouz</p>
+  <ul class="footer-links">
+    {% for l in site.links %}{% if l.url != "" %}
+      <li><a href="{{ l.url }}"{% unless l.url == '/book/' %} rel="me noopener" target="_blank"{% endunless %}>{{ l.label }}</a></li>
+    {% endif %}{% endfor %}
+    {% for l in site.links_secondary %}{% if l.url != "" %}
+      <li><a href="{{ l.url }}" rel="me noopener" target="_blank">{{ l.label }}</a></li>
+    {% endif %}{% endfor %}
+  </ul>
+  <p>© {{ site.time | date: "%Y" }} {{ site.profile.name }}</p>
 </footer>
+<script>
+// Mouvement réduit : on arrête la boucle, <video> retombe sur son poster.
+if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  document.querySelectorAll('video[autoplay]').forEach(v => {
+    v.removeAttribute('autoplay'); v.pause(); v.currentTime = 0;
+  });
+}
+</script>
 </body>
 </html>
