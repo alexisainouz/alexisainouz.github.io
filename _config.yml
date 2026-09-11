@@ -10,8 +10,10 @@ url: https://alexisainouz.com
 lang: en
 
 profile:
-  photo: /assets/alex.jpg        # image fixe : 1re frame + vignette de partage
+  photo: /assets/alex.jpg        # image fixe, affichée avant/à la place de la vidéo
   video: /assets/alex.mp4        # laisse vide ("") pour n'afficher que l'image fixe
+  video_webm: /assets/alex.webm  # même plan, format plus léger pour Chrome/Firefox
+  share: /assets/share.jpg       # vignette 1200x630 pour les partages
   name: Alexis Aïnouz
   line: >-
     Une phrase. Celle qui dit ce que tu fais et pour qui.

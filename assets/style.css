@@ -6,7 +6,7 @@
    direction Bauhaus s'engage sur une palette et s'y tient.
    ─────────────────────────────────────────────────────────────── */
 :root {
-  --blue:  #1b2fbf;
+  --blue:  #2940a8;   /* prélevé au pixel sur le bord droit de la photo */
   --red:   #d62b1f;
   --paper: #f2f0ea;
   --ink:   #12110f;
@@ -45,38 +45,39 @@ header.site nav a:hover { color:var(--ink); border-bottom-color:var(--red); }
 .is-home header.site nav { display:none; }
 
 /* ───────────── ACCUEIL ─────────────
-   Pleine largeur. Le visage est tiré vers la gauche par
-   object-position ; la typo occupe le bleu de droite.        */
-.hero { width:100vw; margin-left:50%; transform:translateX(-50%); }
+   Deux colonnes : la photo à gauche, un aplat à droite pour la typo.
+   L'aplat est la couleur exacte du fond de la photo, le raccord est
+   donc invisible et l'ensemble se lit comme une seule image.       */
+.hero {
+  width:100vw; margin-left:50%; transform:translateX(-50%);
+  background:var(--blue); color:var(--paper);
+  display:grid; grid-template-columns:1fr;
+}
+.hero-media-wrap { position:relative; }
+.hero-media { width:100%; aspect-ratio:1; object-fit:cover; object-position:50% 42%; }
 
-.hero-frame { position:relative; background:var(--blue); }
-.hero-media { width:100%; aspect-ratio:4/3; object-fit:cover; object-position:50% 30%; }
-
-.hero-type { padding:1.75rem var(--gutter) 2.5rem; }
+.hero-type {
+  padding:clamp(1.5rem,5vw,2.5rem) var(--gutter) clamp(2.25rem,7vw,3.5rem);
+  display:flex; flex-direction:column; justify-content:flex-end;
+}
 .hero h1 {
-  margin:0 0 .75rem; font-weight:300; text-transform:lowercase;
-  font-size:clamp(2.75rem,11vw,4rem); line-height:.95; letter-spacing:-.03em;
+  margin:0 0 .85rem; font-weight:300; text-transform:lowercase;
+  font-size:clamp(2.75rem,11vw,4rem); line-height:.92; letter-spacing:-.035em;
+}
+.hero h1::after {                      /* l'unique élément géométrique */
+  content:""; display:block; width:2.5rem; height:.4rem;
+  background:var(--red); margin-top:1.15rem;
 }
 .hero-line {
-  margin:0; max-width:30rem; font-size:clamp(1.0625rem,2.4vw,1.25rem);
-  line-height:1.45; color:var(--ink-soft);
-}
-.hero h1::after {            /* l'unique élément géométrique */
-  content:""; display:block; width:2.25rem; height:.4rem;
-  background:var(--red); margin-top:1.25rem;
+  margin:0; max-width:26rem; font-size:clamp(1.0625rem,2.4vw,1.1875rem);
+  line-height:1.45; color:color-mix(in srgb,var(--paper) 78%,transparent);
 }
 
-@media (min-width:56rem) {
-  .hero-frame { display:block; }
-  .hero-media { aspect-ratio:16/8; object-position:26% 30%; }
-  .hero-type {
-    position:absolute; inset-block:0; right:0; width:46%;
-    display:flex; flex-direction:column; justify-content:flex-end;
-    padding:0 max(var(--gutter), calc(50vw - 32rem)) clamp(2rem,5vw,4rem) 0;
-    color:var(--paper);
-  }
-  .hero h1 { font-size:clamp(3rem,5.5vw,5rem); }
-  .hero-line { color:color-mix(in srgb, var(--paper) 80%, transparent); }
+@media (min-width:52rem) {
+  .hero { grid-template-columns:45fr 55fr; align-items:stretch; }
+  .hero-media { height:100%; aspect-ratio:auto; min-height:clamp(26rem,46vw,34rem); }
+  .hero-type { padding-inline:clamp(2.5rem,5vw,4.5rem) max(var(--gutter),calc(50vw - 32rem)); }
+  .hero h1 { font-size:clamp(3rem,5.2vw,4.75rem); }
 }
 
 /* ---- liens de l'accueil, numérotés ---- */

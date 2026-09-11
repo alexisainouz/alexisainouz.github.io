@@ -4,25 +4,24 @@ permalink: /
 ---
 
 <section class="hero">
-  <div class="hero-frame">
+  <div class="hero-media-wrap">
     {% if site.profile.video != "" %}
     <video class="hero-media" autoplay muted loop playsinline
-           poster="{{ site.profile.photo | relative_url }}"
-           aria-label="{{ site.profile.name }}">
+           poster="{{ site.profile.photo | relative_url }}" aria-label="{{ site.profile.name }}">
+      {% if site.profile.video_webm != "" %}<source src="{{ site.profile.video_webm | relative_url }}" type="video/webm">{% endif %}
       <source src="{{ site.profile.video | relative_url }}" type="video/mp4">
       <img src="{{ site.profile.photo | relative_url }}" alt="{{ site.profile.name }}">
     </video>
     {% else %}
     <img class="hero-media" src="{{ site.profile.photo | relative_url }}" alt="{{ site.profile.name }}">
     {% endif %}
+  </div>
 
-    <div class="hero-type">
-      <h1>{{ site.profile.name }}</h1>
-      <p class="hero-line">{{ site.profile.line }}</p>
-    </div>
+  <div class="hero-type">
+    <h1>{{ site.profile.name }}</h1>
+    <p class="hero-line">{{ site.profile.line }}</p>
   </div>
 </section>
-
 <section class="hero-links">
   <ul class="linklist">
   {% for l in site.links %}
