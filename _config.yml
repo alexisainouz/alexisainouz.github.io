@@ -5,7 +5,7 @@
 # ─────────────────────────────────────────────────────────────────────
 
 title: Alexis Aïnouz
-description: Cook, maker, filmmaker. Founder of SALUT.
+description: Self-taught cook and filmmaker. Obsessive food series on YouTube, a cookbook, a copper cookware company, and a few tools.
 url: https://alexisainouz.com
 lang: en
 
@@ -16,8 +16,9 @@ profile:
   share: /assets/share.jpg       # vignette 1200x630 pour les partages
   name: Alexis Aïnouz
   line: >-
-    Une phrase. Celle qui dit ce que tu fais et pour qui.
-    À écrire — c'est l'étape du 30/06.
+    Self-taught cook and filmmaker. I make obsessive food series
+    on YouTube, and build the tools I wish existed.
+  facts: 2M+ subscribers · Best-selling author · Creative director
 
 # Liens de l'accueil, dans l'ordre d'affichage.
 # Colle les vraies URL à la place des chaînes vides.

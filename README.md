@@ -24,10 +24,8 @@ tout seul en une à deux minutes.
 | `about.md` | `/about/` |
 | `book.md` | `/book/` |
 | `contact.md` | `/contact/` |
+| `book.md` | `/book/` |
 | `lab/index.md` | `/lab/` |
-
-Les blocs `<div class="todo">` sont les marqueurs de ce qui reste à écrire.
-Supprime-les au fur et à mesure.
 
 ## Ajouter un outil dans le lab
 

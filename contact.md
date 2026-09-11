@@ -1,34 +1,24 @@
 ---
 title: Contact
 permalink: /contact/
-description: Get in touch.
+description: Get in touch — brands, press, and freelance work.
 ---
 
-# Contact
+# contact
 
-<div class="todo">
-<strong>À renseigner :</strong> une adresse dédiée au site, pas ton adresse personnelle —
-elle sera récoltée par des robots dès la mise en ligne.
-</div>
+<p class="lede">Brand work, press, speaking, or a question about a recipe —
+the fastest route depends on what you need.</p>
 
-<h2>Working together</h2>
+## Brands and press
 
-{% assign has_secondary = false %}
-{% for l in site.links_secondary %}{% if l.url != "" %}{% assign has_secondary = true %}{% endif %}{% endfor %}
+[LinkedIn]({{ site.links[2].url }}) is the surest way to reach me for anything
+professional. I read it.
 
-{% if has_secondary %}
-<ul class="linklist">
-{% for l in site.links_secondary %}{% if l.url != "" %}
-  <li><a href="{{ l.url }}" rel="me noopener" target="_blank">
-    <span class="label">{{ l.label }}</span>
-    {% if l.note != "" %}<span class="note">{{ l.note }}</span>{% endif %}
-  </a></li>
-{% endif %}{% endfor %}
-</ul>
-{% else %}
-<div class="todo">
-Le lien Malt se colle dans <code>_config.yml</code>, section <code>links_secondary</code>.
-Il est volontairement ici et pas sur l'accueil : Malt situe l'offre du côté du freelance
-francophone, ce qui dessert le positionnement international de la page d'accueil.
-</div>
-{% endif %}
+## Freelance and consulting
+
+I take on creative direction and content work through
+[Malt]({{ site.links_secondary[0].url }}).
+
+## Everything else
+
+[Instagram]({{ site.links[1].url }}) — direct messages are open, and I get to most of them.

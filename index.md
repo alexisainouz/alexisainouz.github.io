@@ -19,6 +19,7 @@ permalink: /
     <div class="hero-type">
       <h1>{{ site.profile.name }}</h1>
       <p class="hero-line">{{ site.profile.line }}</p>
+      {% if site.profile.facts %}<p class="hero-facts">{{ site.profile.facts }}</p>{% endif %}
 
       <ul class="pagenav">
         <li><a href="{{ '/about/'   | relative_url }}">About</a></li>

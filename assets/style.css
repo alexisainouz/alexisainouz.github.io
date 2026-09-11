@@ -5,7 +5,7 @@
    fichier ne donnerait pas le même pixel à l'écran.
    ─────────────────────────────────────────────────────────────── */
 :root {
-  --blue:  #2944a4;
+  --blue:  #2136af;
   --red:   #e2402f;
   --paper: #f4f2ec;
   --soft:  color-mix(in srgb, var(--paper) 72%, transparent);
@@ -59,7 +59,11 @@ a { color:inherit; }
   content:""; display:block; width:3rem; height:.3rem;
   background:var(--red); margin:1.5rem 0 1.25rem;
 }
-.hero-line { margin:0 0 2.5rem; max-width:26rem; color:var(--soft);
+.hero-facts {
+  margin:0 0 2.25rem; font-size:.75rem; letter-spacing:.1em;
+  text-transform:uppercase; color:var(--faint); line-height:1.7;
+}
+.hero-line { margin:0 0 1.25rem; max-width:26rem; color:var(--soft);
              font-size:clamp(1rem,2vw,1.1875rem); line-height:1.45; }
 
 .pagenav { display:flex; flex-wrap:wrap; gap:1.5rem; margin:0 0 2rem; padding:0; list-style:none; }
