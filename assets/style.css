@@ -1,153 +1,145 @@
 /* ───────────────────────────────────────────────────────────────
-   Palette. Le bleu est PROVISOIRE : il sera prélevé au pixel dans
-   la photo dès que le fichier sera là, pour que l'image et le site
-   appartiennent au même objet.
-   Parti pris assumé : un seul thème. Pas de mode sombre — une
-   direction Bauhaus s'engage sur une palette et s'y tient.
+   Tout le site est bleu. Un seul fond, aucune alternance.
+   --blue est prélevé sur le RENDU du navigateur, pas sur le fichier :
+   la vidéo passe par la gestion des couleurs, une valeur lue dans le
+   fichier ne donnerait pas le même pixel à l'écran.
    ─────────────────────────────────────────────────────────────── */
 :root {
-  --blue:  #2940a8;   /* prélevé au pixel sur le bord droit de la photo */
-  --red:   #d62b1f;
-  --paper: #f2f0ea;
-  --ink:   #12110f;
-  --ink-soft: #56534c;
-  --ink-faint:#8b877e;
-  --rule:  #d8d3c8;
-  --gutter: 1.5rem;
+  --blue:  #2944a4;
+  --red:   #e2402f;
+  --paper: #f4f2ec;
+  --soft:  color-mix(in srgb, var(--paper) 72%, transparent);
+  --faint: color-mix(in srgb, var(--paper) 48%, transparent);
+  --hair:  color-mix(in srgb, var(--paper) 22%, transparent);
+  --gutter: clamp(1.5rem, 4vw, 3rem);
   --measure: 34rem;
 }
-@media (min-width: 48rem) { :root { --gutter: 2.5rem; } }
-
 *,*::before,*::after { box-sizing:border-box; }
-html { -webkit-text-size-adjust:100%; }
+html { -webkit-text-size-adjust:100%; background:var(--blue); }
 body {
-  margin:0; padding-inline:var(--gutter); overflow-x:clip;
-  background:var(--paper); color:var(--ink);
-  font:400 1.0625rem/1.6 Jost,ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
+  margin:0; overflow-x:clip; background:var(--blue); color:var(--paper);
+  font:300 1.0625rem/1.6 Jost,ui-sans-serif,-apple-system,"Segoe UI",Helvetica,Arial,sans-serif;
 }
 img,video { max-width:100%; height:auto; display:block; }
 a { color:inherit; }
 
-header.site, main, footer.site { max-width:64rem; margin-inline:auto; }
-
-/* ---- en-tête ---- */
-header.site {
-  display:flex; flex-wrap:wrap; gap:.75rem 2rem; align-items:baseline;
-  justify-content:space-between; padding-block:1.75rem 2.5rem;
-}
-.wordmark { font-size:1rem; font-weight:500; letter-spacing:.01em; text-decoration:none; }
-header.site nav { display:flex; gap:1.75rem; }
-header.site nav a {
-  font-size:.9375rem; color:var(--ink-soft); text-decoration:none;
-  padding-bottom:3px; border-bottom:2px solid transparent;
-}
-header.site nav a:hover { color:var(--ink); border-bottom-color:var(--red); }
-.is-home header.site nav { display:none; }
-
 /* ───────────── ACCUEIL ─────────────
-   Deux colonnes : la photo à gauche, un aplat à droite pour la typo.
-   L'aplat est la couleur exacte du fond de la photo, le raccord est
-   donc invisible et l'ensemble se lit comme une seule image.       */
+   L'image est le fond. Tout le texte se pose dessus, à droite.
+   Aucun bandeau : le nom n'est écrit qu'une fois.                */
 .hero {
-  width:100vw; margin-left:50%; transform:translateX(-50%);
-  background:var(--blue); color:var(--paper);
-  display:grid; grid-template-columns:1fr;
+  position:relative; isolation:isolate; overflow:hidden;
+  min-height:100svh; display:flex; align-items:flex-end;
 }
-.hero-media-wrap { position:relative; }
-.hero-media { width:100%; aspect-ratio:1; object-fit:cover; object-position:50% 42%; }
+/* Mobile : la vidéo carrée occupe le haut, le texte se pose sur le bleu
+   de la page — identique au bleu du mur, donc aucune couture.        */
+.hero-bg {
+  position:absolute; top:0; left:0; z-index:-2;
+  width:100%; aspect-ratio:1; object-fit:cover; object-position:36% 30%;
+  -webkit-mask-image:linear-gradient(to bottom,#000 74%,transparent 100%);
+          mask-image:linear-gradient(to bottom,#000 74%,transparent 100%);
+}
+.hero::after {                       /* voile, uniquement quand c'est étroit */
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(to top,
+    var(--blue) 0%, var(--blue) 52%,
+    color-mix(in srgb,var(--blue) 55%,transparent) 66%, transparent 88%);
+}
+.hero-inner {
+  width:100%; max-width:84rem; margin-inline:auto;
+  padding:5rem var(--gutter) 3rem;
+  display:flex; justify-content:flex-end;
+}
+.hero-type { width:100%; max-width:34rem; }
 
-.hero-type {
-  padding:clamp(1.5rem,5vw,2.5rem) var(--gutter) clamp(2.25rem,7vw,3.5rem);
-  display:flex; flex-direction:column; justify-content:flex-end;
-}
 .hero h1 {
-  margin:0 0 .85rem; font-weight:300; text-transform:lowercase;
-  font-size:clamp(2.75rem,11vw,4rem); line-height:.92; letter-spacing:-.035em;
+  margin:0; font-weight:200; text-transform:lowercase;
+  font-size:clamp(3rem,12vw,6.5rem); line-height:.85; letter-spacing:-.045em;
 }
-.hero h1::after {                      /* l'unique élément géométrique */
-  content:""; display:block; width:2.5rem; height:.4rem;
-  background:var(--red); margin-top:1.15rem;
+.hero h1::after {
+  content:""; display:block; width:3rem; height:.3rem;
+  background:var(--red); margin:1.5rem 0 1.25rem;
 }
-.hero-line {
-  margin:0; max-width:26rem; font-size:clamp(1.0625rem,2.4vw,1.1875rem);
-  line-height:1.45; color:color-mix(in srgb,var(--paper) 78%,transparent);
-}
+.hero-line { margin:0 0 2.5rem; max-width:26rem; color:var(--soft);
+             font-size:clamp(1rem,2vw,1.1875rem); line-height:1.45; }
+
+.pagenav { display:flex; flex-wrap:wrap; gap:1.5rem; margin:0 0 2rem; padding:0; list-style:none; }
+.pagenav a { font-size:.75rem; letter-spacing:.16em; text-transform:uppercase;
+             text-decoration:none; color:var(--soft); padding-bottom:4px;
+             border-bottom:1px solid var(--hair); }
+.pagenav a:hover { color:var(--paper); border-bottom-color:var(--red); }
+
+.linklist { counter-reset:l; margin:0; padding:0; list-style:none;
+            border-top:1px solid var(--faint); }
+.linklist li { border-bottom:1px solid var(--hair); }
+.linklist a { display:grid; grid-template-columns:2.25rem 1fr auto;
+              align-items:baseline; gap:.4rem .75rem; padding:.7rem .1rem;
+              text-decoration:none; }
+.linklist a::before { counter-increment:l; content:counter(l,decimal-leading-zero);
+                      font-size:.6875rem; letter-spacing:.12em; color:var(--faint); }
+.linklist .label { font-size:1.1875rem; font-weight:300; letter-spacing:-.02em; }
+.linklist .note  { font-size:.75rem; text-align:right; color:var(--faint); }
+.linklist a:hover .label { text-decoration:underline; text-underline-offset:5px; }
+.linklist a:hover::before { color:var(--red); }
 
 @media (min-width:52rem) {
-  .hero { grid-template-columns:45fr 55fr; align-items:stretch; }
-  .hero-media { height:100%; aspect-ratio:auto; min-height:clamp(26rem,46vw,34rem); }
-  .hero-type { padding-inline:clamp(2.5rem,5vw,4.5rem) max(var(--gutter),calc(50vw - 32rem)); }
-  .hero h1 { font-size:clamp(3rem,5.2vw,4.75rem); }
+  /* Desktop : la vidéo est calée à gauche sur toute la hauteur. Sa
+     largeur suit sa hauteur (elle est carrée), le reste est du bleu. */
+  .hero { align-items:center; }
+  .hero-bg { top:0; height:100%; width:auto; max-width:none;
+             aspect-ratio:auto; object-position:34% 30%;
+             /* le bord droit se dissout dans le fond : la jonction est
+                invisible même si l'écran rend les couleurs autrement */
+             -webkit-mask-image:linear-gradient(to right,#000 78%,transparent 100%);
+                     mask-image:linear-gradient(to right,#000 78%,transparent 100%); }
+  .hero::after { background:none; }
+  .hero::after { background:linear-gradient(to right,
+      transparent 0%, transparent 38%,
+      color-mix(in srgb,var(--blue) 45%,transparent) 50%, var(--blue) 68%); }
+  .hero h1 { font-size:clamp(4rem,7.8vw,7.25rem); }
 }
 
-/* ---- liens de l'accueil, numérotés ---- */
-.hero-links { padding-block:clamp(2.5rem,6vw,4.5rem) 0; }
-.linklist { counter-reset:l; margin:0; padding:0; list-style:none;
-            max-width:44rem; border-top:2px solid var(--ink); }
-.linklist li { border-bottom:1px solid var(--rule); }
-.linklist a, .linklist .pending {
-  display:grid; grid-template-columns:3.25rem 1fr auto; align-items:baseline;
-  gap:.5rem 1rem; padding:1.05rem .25rem; text-decoration:none;
-}
-.linklist a::before, .linklist .pending::before {
-  counter-increment:l; content:counter(l,decimal-leading-zero);
-  color:var(--ink-faint); font-size:.8125rem; letter-spacing:.08em;
-}
-.linklist .label { font-size:1.375rem; font-weight:400; letter-spacing:-.015em; }
-.linklist .note { color:var(--ink-faint); font-size:.875rem; text-align:right; }
-.linklist a:hover { background:var(--blue); color:var(--paper); }
-.linklist a:hover :is(.label,.note) { color:var(--paper); }
-.linklist a:hover::before { color:var(--paper); }
-.linklist .pending { color:var(--ink-faint); }
-.linklist .pending .label { text-decoration:line-through; }
+/* ───────────── PAGES INTERNES ───────────── */
+header.site, main, footer.site { max-width:64rem; margin-inline:auto; padding-inline:var(--gutter); }
+.is-home main { max-width:none; padding:0; }
+.is-home header.site, .is-home footer.site { display:none; }
 
-.more { margin-top:1.75rem; font-size:.9375rem; color:var(--ink-faint); }
-.more a { color:var(--ink-soft); text-underline-offset:3px; }
+header.site { display:flex; flex-wrap:wrap; gap:.75rem 2rem; align-items:baseline;
+              justify-content:space-between; padding-block:2rem 3.5rem; }
+.wordmark { font-size:1rem; font-weight:400; text-decoration:none; }
+header.site nav { display:flex; gap:1.75rem; }
+header.site nav a { font-size:.75rem; letter-spacing:.16em; text-transform:uppercase;
+                    color:var(--soft); text-decoration:none; padding-bottom:4px;
+                    border-bottom:1px solid transparent; }
+header.site nav a:hover { color:var(--paper); border-bottom-color:var(--red); }
 
-/* ---- pages internes ---- */
-main :is(p,ul,ol,blockquote,h2,h3):not([class]) { max-width:var(--measure); }
-main > h1 {
-  margin:0 0 1.5rem; max-width:18ch; font-weight:300; text-transform:lowercase;
-  font-size:clamp(2.5rem,7vw,4.5rem); line-height:.98; letter-spacing:-.03em;
-}
-.lede { font-size:clamp(1.0625rem,2vw,1.25rem); line-height:1.5;
-        color:var(--ink-soft); max-width:32rem; }
-main h2 { margin:4rem 0 1rem; font-size:.75rem; font-weight:500; letter-spacing:.14em;
-          text-transform:uppercase; color:var(--ink-faint); }
-main h3 { margin:2.5rem 0 .5rem; font-size:1.25rem; font-weight:400; }
-main p a, main li a { color:var(--blue); text-underline-offset:3px; }
-code { font-size:.9em; background:color-mix(in srgb,var(--ink) 8%,transparent);
-       padding:.1em .35em; }
+main :is(p,ul,ol,h2,h3):not([class]) { max-width:var(--measure); }
+main > h1 { margin:0 0 1.5rem; max-width:16ch; font-weight:200; text-transform:lowercase;
+            font-size:clamp(2.75rem,8vw,5rem); line-height:.9; letter-spacing:-.04em; }
+.lede { font-size:clamp(1.0625rem,2vw,1.25rem); line-height:1.5; color:var(--soft); max-width:32rem; }
+main h2 { margin:4rem 0 1rem; font-size:.6875rem; font-weight:400; letter-spacing:.18em;
+          text-transform:uppercase; color:var(--faint); }
+main h3 { margin:2.5rem 0 .5rem; font-size:1.25rem; font-weight:300; }
+main a { color:var(--paper); text-underline-offset:3px; text-decoration-color:var(--faint); }
+main a:hover { text-decoration-color:var(--red); }
+code { font-size:.9em; background:color-mix(in srgb,var(--paper) 14%,transparent); padding:.1em .35em; }
 
-.todo {
-  max-width:var(--measure); margin:1.5rem 0; padding:1rem 1.125rem;
-  border-left:4px solid var(--red); background:color-mix(in srgb,var(--red) 7%,transparent);
-  color:var(--ink-soft); font-size:.9375rem;
-}
-.todo strong { color:var(--ink); }
+.todo { max-width:var(--measure); margin:1.5rem 0; padding:1rem 1.125rem;
+        border-left:3px solid var(--red); background:color-mix(in srgb,var(--paper) 8%,transparent);
+        color:var(--soft); font-size:.9375rem; }
+.todo strong { color:var(--paper); }
 
-/* ---- lab ---- */
 .toys { display:grid; gap:1px; margin:2rem 0 0; padding:0; list-style:none;
-        background:var(--rule); border-block:1px solid var(--rule);
+        background:var(--hair); border-block:1px solid var(--hair);
         grid-template-columns:repeat(auto-fill,minmax(17rem,1fr)); }
-.toys li { background:var(--paper); }
+.toys li { background:var(--blue); }
 .toys a { display:block; padding:1.5rem 1.25rem; text-decoration:none; height:100%; }
-.toys a:hover { background:var(--blue); color:var(--paper); }
-.toys .name { display:block; font-size:1.125rem; letter-spacing:-.01em; }
-.toys .what { display:block; margin-top:.35rem; color:var(--ink-soft); font-size:.9375rem; }
-.toys a:hover .what { color:color-mix(in srgb,var(--paper) 80%,transparent); }
-.toys .empty { padding:2rem 1.25rem; color:var(--ink-faint); }
+.toys a:hover { background:color-mix(in srgb,var(--paper) 10%,var(--blue)); }
+.toys .name { display:block; font-size:1.125rem; }
+.toys .what { display:block; margin-top:.35rem; color:var(--soft); font-size:.9375rem; }
+.toys .empty { padding:2rem 1.25rem; color:var(--faint); }
 
-/* ---- pied ---- */
-footer.site {
-  margin-top:clamp(4rem,10vw,7rem); padding-block:2rem 3rem;
-  border-top:2px solid var(--ink); color:var(--ink-faint); font-size:.875rem;
-}
-.footer-links { display:flex; flex-wrap:wrap; gap:.5rem 1.5rem;
-                margin:0 0 1rem; padding:0; list-style:none; }
-.footer-links a { color:var(--ink-soft); text-decoration:none; }
+footer.site { margin-top:clamp(4rem,10vw,7rem); padding-block:2rem 3rem;
+              border-top:1px solid var(--hair); color:var(--faint); font-size:.8125rem; }
+.footer-links { display:flex; flex-wrap:wrap; gap:.5rem 1.5rem; margin:0 0 1rem; padding:0; list-style:none; }
+.footer-links a { color:var(--soft); text-decoration:none; }
 .footer-links a:hover { color:var(--red); }
-
-/* ---- accessibilité : mouvement réduit ----
-   La vidéo est mise en pause par le script du gabarit ; la balise
-   <video> affiche alors son poster, c'est-à-dire l'image fixe.     */

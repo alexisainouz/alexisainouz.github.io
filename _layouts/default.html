@@ -16,8 +16,9 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500&display=swap">
-<link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Jost:wght@200;300;400;500&display=swap">
+<!-- ?v=... : empreinte de build, force le navigateur à recharger le CSS après chaque publication -->
+<link rel="stylesheet" href="{{ '/assets/style.css' | relative_url }}?v={{ site.time | date: '%s' }}">
 </head>
 <body{% if page.home %} class="is-home"{% endif %}>
 
@@ -43,8 +44,8 @@
   </ul>
   <p>© {{ site.time | date: "%Y" }} {{ site.profile.name }}</p>
 </footer>
+
 <script>
-// Mouvement réduit : on arrête la boucle, <video> retombe sur son poster.
 if (matchMedia('(prefers-reduced-motion: reduce)').matches) {
   document.querySelectorAll('video[autoplay]').forEach(v => {
     v.removeAttribute('autoplay'); v.pause(); v.currentTime = 0;
