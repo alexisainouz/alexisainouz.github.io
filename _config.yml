@@ -1,0 +1,14 @@
+title: Alexis Aïnouz
+description: Site personnel
+url: https://alexisainouz.com
+
+# Jekyll tourne nativement sur GitHub Pages : les fichiers .md sont rendus en HTML
+# à chaque push, et les .html bruts (les jouets du /lab) sont recopiés tels quels.
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+exclude:
+  - README.md
