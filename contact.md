@@ -55,7 +55,9 @@ write below and it reaches me directly.</p>
     try {
       const r = await fetch(f.action, { method: 'POST', body: new FormData(f),
                                         headers: { Accept: 'application/json' } });
-      if (!r.ok) throw new Error(r.status);
+      // Web3Forms peut répondre 200 avec { success: false } : le code HTTP ne suffit pas.
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok || data.success === false) throw new Error(data.message || r.status);
       f.reset();
       note.textContent = 'Thank you — your message is on its way.';
       note.className = 'form-note ok';

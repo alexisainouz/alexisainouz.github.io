@@ -21,10 +21,7 @@ tout seul en une à deux minutes.
 | Fichier | Page |
 |---|---|
 | `index.md` | l'accueil |
-| `about.md` | `/about/` |
-| `book.md` | `/book/` |
 | `contact.md` | `/contact/` |
-| `book.md` | `/book/` |
 | `lab/index.md` | `/lab/` |
 
 ## Ajouter un outil dans le lab

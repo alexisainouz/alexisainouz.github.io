@@ -55,13 +55,13 @@
     co:   real.querySelector('a[href*="salutcompany"]')?.href || '#',
     li:   real.querySelector('a[href*="linkedin"]')?.href     || '#',
     malt: real.querySelector('a[href*="malt"]')?.href         || '#',
+    ig:   real.querySelector('a[href*="instagram"]')?.href    || '#',
     lab: '/lab/', contact: '/contact/',
   };
 
   // t = texte · a = lien · c = mot pensé puis corrigé · typo = faute rattrapée
   const SCRIPT = [
-    { t: 'I’m Alexis Gabriel A' }, { typo: 'ïnozu', fix: 'ïnouz' },
-    { t: ' — Alex is fine.' }, { br: 1 },
+    { t: 'I’m Alexis Gabriel Aïnouz — Alex is fine.' }, { br: 1 },
     { t: 'I started making ' }, { c: ['pathological', 'obsessive'] },
     { t: ' food films on ' }, { a: [L.yt, 'YouTube'] },
     { t: ', 235 million views ago. Along the way I wrote ' },
@@ -71,7 +71,9 @@
     { t: ' tools for cooks.' }, { p: 1 },
     { t: 'I have been an ' }, { a: [L.li, 'entrepreneur'] },
     { t: ' for more than twenty years. I now ' }, { a: [L.malt, 'freelance'] },
-    { t: ' with teams who need creativity, and spend the rest of my time finding ' },
+    { t: ' with teams who need creativity, and spend the rest of my time ' },
+    { a: [L.ig, 'dancing, sailing, cycling'] },
+    { t: ', and finding ' },
     { a: [L.lab, 'solutions to problems nobody else has'] },
     { t: '.' }, { p: 1 },
     { a: [L.contact, 'Here is how to reach out to me'] }, { t: '.' },

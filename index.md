@@ -33,7 +33,8 @@ permalink: /
         for more than twenty years. I now
         <a href="{{ site.links_secondary[0].url }}" rel="me noopener" target="_blank">freelance</a>
         with teams who need creativity, and spend the rest of my time
-        finding <a href="{{ '/lab/' | relative_url }}">solutions to problems nobody else has</a>.</p>
+        <a href="{{ site.links[1].url }}" rel="me noopener" target="_blank">dancing, sailing, cycling</a>,
+        and finding <a href="{{ '/lab/' | relative_url }}">solutions to problems nobody else has</a>.</p>
 
         <p><a href="{{ '/contact/' | relative_url }}">Here is how to reach out to me</a>.</p>
       </div>

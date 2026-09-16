@@ -42,7 +42,7 @@ links:
 # turnstile_key : clé publique Cloudflare Turnstile. Laisse vide pour désactiver.
 form:
   endpoint: https://api.web3forms.com/submit
-  access_key: ""
+  access_key: "3c434293-7f11-48d0-8770-ac554b72e9b1"
   turnstile_key: ""
 
 # Liens secondaires : pied de page et page contact uniquement.
