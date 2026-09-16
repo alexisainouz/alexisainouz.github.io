@@ -4,7 +4,7 @@ permalink: /about/
 description: Self-taught cook and filmmaker. Twelve years spent making things that make food better.
 ---
 
-# about
+# About
 
 <p class="lede">Self-taught cook and filmmaker. Twelve years spent making things
 that make food better — on screen, in print, and in the hand.</p>

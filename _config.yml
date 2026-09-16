@@ -36,7 +36,18 @@ links:
     note: "Just a French Guy Cooking"
     url: /book/
 
+# Formulaire de contact.
+# access_key : l'identifiant public du service. Ton adresse de destination est
+# enregistrée CHEZ EUX, jamais ici — elle n'apparaît nulle part dans le site.
+# turnstile_key : clé publique Cloudflare Turnstile. Laisse vide pour désactiver.
+form:
+  endpoint: https://api.web3forms.com/submit
+  access_key: ""
+  turnstile_key: ""
+
 # Liens secondaires : pied de page et page contact uniquement.
+salut: https://salutcompany.com
+
 links_secondary:
   - label: Malt
     note: Freelance profile

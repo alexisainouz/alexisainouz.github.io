@@ -4,7 +4,7 @@ permalink: /lab/
 description: Small tools I built to solve a specific problem, usually my own.
 ---
 
-# lab
+# Lab
 
 <p class="lede">Small tools I built to solve one specific problem — usually my own.
 Most are about food. Not all of them.</p>

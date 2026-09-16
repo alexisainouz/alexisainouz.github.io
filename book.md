@@ -4,7 +4,7 @@ permalink: /book/
 description: Just a French Guy Cooking — easy recipes and kitchen hacks for rookies. Quadrille, 2018.
 ---
 
-# just a french guy cooking
+# Just a French Guy Cooking
 
 <p class="lede">Easy recipes and kitchen hacks for rookies.</p>
 
