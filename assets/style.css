@@ -10,7 +10,7 @@
   font-weight:400 700;font-style:normal;font-display:swap;}
 
 :root {
-  --blue:  #2136af;
+  --blue:  #2136b0;
   --accent: #d98441;   /* terre, plus chaude que le rouge Bauhaus */
   --paper: #f4f2ec;
   --soft:  color-mix(in srgb, var(--paper) 72%, transparent);
@@ -148,17 +148,21 @@ footer.site { margin-top:clamp(4rem,10vw,7rem); padding-block:2rem 3rem;
 .form-note.ko{color:var(--accent)}
 .cf-turnstile{margin-bottom:1.4rem}
 
-/* Bouton de son du rejeu de frappe. Créé par JavaScript, retiré avec
-   l'animation. Discret, mais assez visible pour être remarqué. */
-.sound-toggle{
-  position:fixed;right:clamp(1rem,3vw,2rem);bottom:clamp(1rem,3vw,2rem);z-index:20;
-  width:2.5rem;height:2.5rem;display:grid;place-items:center;
+/* Les deux boutons du coin, créés par JavaScript (donc absents sans JS).
+   Pendant la frappe on montre le son ; au repos, le rejeu. */
+.dock{position:fixed;right:clamp(1rem,3vw,2rem);bottom:clamp(1rem,3vw,2rem);
+  z-index:20;display:flex;gap:.5rem}
+.dock-btn{width:2.5rem;height:2.5rem;display:grid;place-items:center;
   background:color-mix(in srgb,var(--paper) 10%,transparent);
-  border:1px solid var(--hair);border-radius:50%;cursor:pointer;
-  color:var(--soft);transition:color .15s,border-color .15s,background .15s}
-.sound-toggle:hover{color:var(--paper);border-color:var(--soft);
+  border:1px solid var(--hair);border-radius:50%;cursor:pointer;color:var(--faint);
+  transition:color .15s,border-color .15s,background .15s,opacity .25s}
+.dock-btn:hover{color:var(--paper);border-color:var(--soft);
   background:color-mix(in srgb,var(--paper) 18%,transparent)}
-.sound-toggle svg{width:1.1rem;height:1.1rem;fill:currentColor;
-  stroke:currentColor;stroke-width:1.6;stroke-linecap:round;fill-rule:evenodd}
-.sound-toggle svg path:not(:first-child),.sound-toggle svg line{fill:none}
-@media (prefers-reduced-motion: reduce){.sound-toggle{display:none}}
+.dock-btn svg{width:1.1rem;height:1.1rem;fill:none;stroke:currentColor;
+  stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.dock-btn.is-sound svg path:first-child{fill:currentColor;stroke:none}
+.dock .is-sound{display:none}
+.dock .is-again{display:grid}
+.dock.is-playing .is-sound{display:grid}
+.dock.is-playing .is-again{display:none}
+@media (prefers-reduced-motion: reduce){.dock{display:none}}

@@ -34,7 +34,7 @@ links:
     url: "https://www.linkedin.com/in/alexis-gabriel-a%C3%AFnouz-31b5b614/"
   - label: The book
     note: "Just a French Guy Cooking"
-    url: /book/
+    url: https://www.amazon.fr/Just-French-Guy-Cooking-Recipes/dp/1787132234
 
 # Formulaire de contact.
 # access_key : l'identifiant public du service. Ton adresse de destination est
@@ -47,6 +47,7 @@ form:
 
 # Liens secondaires : pied de page et page contact uniquement.
 salut: https://salutcompany.com
+book_url: https://www.amazon.fr/Just-French-Guy-Cooking-Recipes/dp/1787132234
 
 links_secondary:
   - label: Malt
