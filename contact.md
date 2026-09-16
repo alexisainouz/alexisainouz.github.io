@@ -1,6 +1,7 @@
 ---
 title: Contact
 permalink: /contact/
+bare: true
 description: Get in touch.
 ---
 

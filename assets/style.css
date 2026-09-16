@@ -166,3 +166,15 @@ footer.site { margin-top:clamp(4rem,10vw,7rem); padding-block:2rem 3rem;
 .dock.is-playing .is-sound{display:grid}
 .dock.is-playing .is-again{display:none}
 @media (prefers-reduced-motion: reduce){.dock{display:none}}
+
+/* ---------- page nue : le formulaire seul, centré ----------
+   Aucun en-tête, aucun pied de page, aucune navigation. On revient
+   en arrière avec le navigateur — c'est le geste que tout le monde
+   connaît, et il ne demande rien à l'écran.                        */
+body.is-bare { min-height:100dvh; display:grid; align-content:center; }
+body.is-bare main { max-width:34rem; padding-block:clamp(3rem,9vh,6rem); }
+body.is-bare main > h1 { margin-bottom:1rem; }
+body.is-bare .form { margin-top:2rem; }
+
+/* Curseur fixe pendant la frappe : c'est l'arrêt qui doit se voir. */
+.say-stage.is-typing p:last-child::after{animation:none;opacity:1}

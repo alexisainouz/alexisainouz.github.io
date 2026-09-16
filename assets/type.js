@@ -15,69 +15,64 @@
     set: (k, v) => { try { localStorage.setItem(k, v); } catch (e) {} },
   };
 
-  /* ---------- le son, synthétisé : aucun fichier à télécharger ---------- */
+  /* ---------- le son : de vraies frappes, échantillonnées ----------
+     assets/keys.mp3 contient 18 frappes réelles mises bout à bout, une par
+     fente de 220 ms, rangées du timbre le plus grave au plus aigu. Une
+     synthèse ne peut pas imiter un clavier : un clavier, ce n'est pas un
+     son dont les paramètres varient, c'est trente touches physiquement
+     différentes. D'où la banque.                                          */
   const Keys = (() => {
     let ac = null;
     try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
     if (!ac) return null;
 
-    /* Les frappes se chevauchent au rythme réel : deux ou trois sons coexistent
-       en permanence et leurs amplitudes s'additionnent. Sans ce limiteur, le
-       niveau choisi saturerait sur les rafales — un grésillement, pas un son
-       plus fort. Il ne s'entend pas, il empêche seulement le débordement.     */
     const comp = ac.createDynamicsCompressor();
     comp.threshold.value = -6; comp.knee.value = 10;
     comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.05;
-    // Rétablissement court : une frappe survient toutes les ~45 ms. Un temps
-    // plus long et le limiteur reste serré en permanence, fondant les frappes
-    // les unes dans les autres au lieu d'écrêter les seules crêtes.
     const bus = ac.createGain();
     bus.connect(comp); comp.connect(ac.destination);
 
-    /* Bruit rose (-3 dB/octave) plutôt que blanc : le blanc porte autant
-       d'énergie dans les aigus que dans les graves, d'où le sifflement.      */
-    const noise = ac.createBuffer(1, ac.sampleRate * 0.12, ac.sampleRate);
-    const d = noise.getChannelData(0);
-    let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
-    for (let i = 0; i < d.length; i++) {
-      const w = Math.random() * 2 - 1;
-      b0 = 0.99886*b0 + w*0.0555179;  b1 = 0.99332*b1 + w*0.0750759;
-      b2 = 0.96900*b2 + w*0.1538520;  b3 = 0.86650*b3 + w*0.3104856;
-      b4 = 0.55000*b4 + w*0.5329522;  b5 = -0.7616*b5 - w*0.0168980;
-      d[i] = (b0+b1+b2+b3+b4+b5+b6 + w*0.5362) * 0.11;
-      b6 = w * 0.115926;
-    }
+    const SLOT = 0.220, N = 18, DUR = 0.155;
+    const LEVEL = 0.38;          // les échantillons sont normalisés à 0,85 de crête
+    let buf = null, at = null, loading = null;
 
-    const LEVEL = 0.32;   // amplitude crête, réglée à l'oreille sur banc d'essai
+    const load = () => loading ||= fetch('/assets/keys.mp3')
+      .then(r => r.arrayBuffer())
+      .then(d => ac.decodeAudioData(d))
+      .then(b => {
+        buf = b;
+        /* L'encodage MP3 décale tout d'un silence de tête variable. Plutôt
+           que de le supposer, on retrouve l'attaque réelle dans chaque fente. */
+        const d2 = b.getChannelData(0), sr = b.sampleRate, ns = Math.round(SLOT * sr);
+        at = [];
+        for (let i = 0; i < N; i++) {
+          const s0 = i * ns, s1 = Math.min(s0 + ns, d2.length);
+          let pk = 0;
+          for (let j = s0; j < s1; j++) { const v = Math.abs(d2[j]); if (v > pk) pk = v; }
+          let k = s0;
+          for (let j = s0; j < s1; j++) if (Math.abs(d2[j]) > pk * 0.06) { k = j; break; }
+          at.push(Math.max(s0, k - Math.round(0.002 * sr)) / sr);
+        }
+      })
+      .catch(() => { buf = null; });
 
-    const hit = (mul, cut, decay) => {
-      if (ac.state !== 'running') return;
-      const t = ac.currentTime;
-
-      const src = ac.createBufferSource(); src.buffer = noise;
-      src.playbackRate.value = 0.9 + Math.random() * 0.2;
-
-      const hp = ac.createBiquadFilter();       // coupe le grave inutile
-      hp.type = 'highpass'; hp.frequency.value = 90; hp.Q.value = 0.7;
-
-      const lp = ac.createBiquadFilter(); lp.type = 'lowpass';
-      lp.frequency.value = cut * (0.88 + Math.random() * 0.24);
-      lp.Q.value = 0.7;   // sous 1 : pas de bosse de résonance, donc pas de métal
-
+    /* Trois familles puisées dans la même banque : les graves pour la barre
+       d'espace, le milieu pour les lettres, les plus secs pour l'effacement. */
+    const pick = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
+    const play = (i, mul) => {
+      if (!buf || ac.state !== 'running') return;
+      const src = ac.createBufferSource(); src.buffer = buf;
+      src.playbackRate.value = 0.94 + Math.random() * 0.13;
       const g = ac.createGain();
-      g.gain.setValueAtTime(0.0001, t);
-      g.gain.linearRampToValueAtTime(LEVEL * mul * (0.72 + Math.random() * 0.56),
-                                     t + 0.012);   // 12 ms : une frappe, pas un clic
-      g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-
-      src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(bus);
-      src.start(t); src.stop(t + decay + 0.02);
+      g.gain.value = LEVEL * mul * (0.82 + Math.random() * 0.34);
+      src.connect(g); g.connect(bus);
+      src.start(ac.currentTime, at[i], DUR);
     };
     return {
-      wake:  () => ac.resume(),
-      key:   () => hit(1,    1500, 0.042),
-      space: () => hit(1.28,  930, 0.061),
-      back:  () => hit(0.72, 1170, 0.036),
+      wake:  () => { load(); return ac.resume(); },
+      key:   () => play(pick(3, 15), 1),
+      space: () => play(pick(0, 2),  1.2),
+      back:  () => play(pick(12, 17), 1.05),
     };
   })();
 
@@ -124,7 +119,13 @@
 
   const REST = { '.': 540, '!': 540, '?': 540, ':': 300, ';': 300, ',': 190, '—': 240 };
   const wait = ms => new Promise(r => setTimeout(r, ms));
-  const pace = () => 30 + Math.random() * 30;
+  /* Une frappe humaine n'est pas métronomique : des rafales courtes, puis
+     une hésitation — on cherche un mot, on repositionne la main. Une plage
+     unique et étroite recrée une pulsation régulière, qu'on entend comme
+     mécanique quelles que soient les bornes.                              */
+  const pace = () => Math.random() < 0.06
+    ? 120 + Math.random() * 160      // l'hésitation, rare mais franche
+    : 24  + Math.random() * 40;      // le flux courant
 
   /* ---------- les deux boutons du coin ---------- */
   const dock = document.createElement('div');
@@ -184,20 +185,36 @@
   };
   const audible = ch => ch === ' ' || Math.random() < SOUND_RATE;
 
+  /* Le curseur d'un éditeur est fixe tant qu'on tape et se remet à clignoter
+     dès qu'on s'arrête. C'est ce contraste qui donne à voir l'hésitation —
+     un clignotement continu, lui, ne signale rien.                         */
+  let idle = null;
+  const tick = () => {
+    stage?.classList.add('is-typing');
+    clearTimeout(idle);
+    idle = setTimeout(() => stage?.classList.remove('is-typing'), 160);
+  };
+
   async function type(str, ms) {
     for (const ch of str) {
       if (stopped) return;
       put(ch);
       if (sound && Keys && audible(ch)) (ch === ' ' ? Keys.space : Keys.key)();
+      tick();
       prev = ch;
       await wait(ms ? ms() : pace());
       if (REST[ch]) await wait(REST[ch]);
     }
   }
-  async function erase(n, ms = 34) {
+  /* L'effacement est le seul moment où la frappe redevient une rafale : on a
+     regardé le mot, on a décidé qu'il n'allait pas, et le doigt reste appuyé.
+     Chaque retour arrière sonne, et vite. C'est le contraste avec le reste
+     qui le rend lisible.                                                    */
+  async function erase(n, ms = 24) {
     for (let i = 0; i < n; i++) {
       if (stopped) return;
-      drop(); if (sound && Keys && Math.random() < 0.38) Keys.back();
+      drop(); if (sound && Keys) Keys.back();
+      tick();
       await wait(ms);
     }
   }
@@ -253,7 +270,7 @@
         await erase(step.typo.length); await type(step.fix);
       }
       else if (step.c) {
-        await type(step.c[0]); await wait(520);
+        await type(step.c[0]); await wait(760);
         await erase(step.c[0].length, 26); await wait(140);
         await type(step.c[1]);
       }
