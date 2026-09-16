@@ -85,7 +85,19 @@
   .reading b { font-weight:400; color:var(--paper); }
 
   /* ── le résultat, en bloc de code ── */
-  .out { margin:3rem 0 0; padding:1.5rem 1.5rem 1.4rem;
+  .block { position:relative; margin:3rem 0 0; }
+  .copy { position:absolute; top:.85rem; right:.85rem; z-index:1;
+          display:inline-flex; align-items:center; gap:.4rem;
+          font:inherit; font-family:'Instrument Sans',sans-serif; font-size:var(--xs);
+          letter-spacing:.1em; text-transform:uppercase;
+          color:var(--faint); background:transparent;
+          border:1px solid var(--hair); border-radius:2px;
+          padding:.35rem .6rem; cursor:pointer; }
+  .copy:hover { color:var(--paper); border-color:var(--soft); }
+  .copy svg { width:13px; height:13px; fill:none; stroke:currentColor;
+              stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+  .copy.done { color:var(--accent); border-color:var(--accent); }
+  .out { margin:0; padding:1.5rem 1.5rem 1.4rem;
          border:1px solid var(--hair); border-radius:3px;
          background:color-mix(in srgb, #000 10%, transparent);
          font-family:var(--mono); font-size:var(--m); line-height:1.9;
@@ -143,7 +155,15 @@
     </div>
   </form>
 
-  <pre class="out" id="out" aria-live="polite"><span class="cap">You need</span></pre>
+  <div class="block">
+    <button type="button" class="copy" id="copy" aria-label="Copy the amounts">
+      <svg viewBox="0 0 24 24" aria-hidden="true" id="copyicon">
+        <rect x="9" y="9" width="12" height="12" rx="2"/>
+        <path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>
+      </svg><span id="copylabel">Copy</span>
+    </button>
+    <pre class="out" id="out" aria-live="polite"><span class="cap">You need</span></pre>
+  </div>
 
   <p class="after">That yeast figure looks far too small. It isn't. Try it.<br>
   If you have never made this dough before,
@@ -181,6 +201,11 @@
   const line = (name, value) =>
     name.padEnd(7) + String(value).padStart(6) + ' g';
 
+  /* Ce qu'on copie est exactement ce qu'on lit, à l'étiquette près : la ligne
+     de contexte est affichée dans le bloc, pour qu'un collage dans un carnet
+     reste compréhensible trois jours plus tard.                             */
+  let clip = '';
+
   const update = () => {
     const n = clampCount();
     const g = parseFloat((sizes.find(r => r.checked) || {}).value);
@@ -194,6 +219,8 @@
                 'Very wet. You will need practice.';
 
     const flour = (n * g) / (1 + h / 100 + SALT + YEAST);
+    const size = sizes.find(r => r.checked).parentElement.textContent.trim().split(' ')[0];
+    const head = n + ' ' + size + ' pizza' + (n > 1 ? 's' : '') + ', ' + h + ' % water';
     const rows = [
       line('flour', show(flour)),
       line('water', show(flour * h / 100)),
@@ -201,8 +228,9 @@
       line('yeast', show(flour * YEAST)),
     ].join('\n');
 
+    clip = head + '\n\n' + rows;
     out.innerHTML = '<span class="cap">You need</span>';
-    out.appendChild(document.createTextNode(rows));
+    out.appendChild(document.createTextNode(clip));
 
     // Les bornes se voient : un bouton mort doit avoir l'air mort.
     el('less').disabled = n <= MIN;
@@ -219,6 +247,33 @@
     i.addEventListener('input', update);
     i.addEventListener('change', update);
   });
+  const btn = el('copy'), label = el('copylabel'), icon = el('copyicon');
+  const TICK = '<path d="M4 12.5 9.5 18 20 6"/>';
+  const COPY = '<rect x="9" y="9" width="12" height="12" rx="2"/>' +
+               '<path d="M5 15H4a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1h10a1 1 0 0 1 1 1v1"/>';
+  let back = null;
+
+  btn.addEventListener('click', async () => {
+    let ok = true;
+    try { await navigator.clipboard.writeText(clip); }
+    catch (e) {
+      // Sans autorisation ni contexte sécurisé : on retombe sur la vieille méthode.
+      try {
+        const t = document.createElement('textarea');
+        t.value = clip; t.style.position = 'fixed'; t.style.opacity = '0';
+        document.body.appendChild(t); t.select();
+        ok = document.execCommand('copy'); t.remove();
+      } catch (e2) { ok = false; }
+    }
+    clearTimeout(back);
+    btn.classList.toggle('done', ok);
+    icon.innerHTML = ok ? TICK : COPY;
+    label.textContent = ok ? 'Copied' : 'Press ⌘C';
+    back = setTimeout(() => {
+      btn.classList.remove('done'); icon.innerHTML = COPY; label.textContent = 'Copy';
+    }, 1800);
+  });
+
   document.getElementById('calc').addEventListener('submit', e => e.preventDefault());
   update();
 })();
