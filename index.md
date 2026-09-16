@@ -36,7 +36,7 @@ permalink: /
         <a href="{{ site.links[1].url }}" rel="me noopener" target="_blank">dancing, sailing, cycling</a>,
         and finding <a href="{{ '/lab/' | relative_url }}">solutions to problems nobody else has</a>.</p>
 
-        <p><a href="{{ '/contact/' | relative_url }}">Say hello</a>.</p>
+        <p><a href="{{ '/contact/' | relative_url }}">Say hello</a> ;)</p>
       </div>
     </div>
   </div>

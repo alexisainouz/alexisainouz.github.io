@@ -33,7 +33,10 @@
     bus.connect(comp); comp.connect(ac.destination);
 
     const SLOT = 0.220, N = 18, DUR = 0.155;
-    const LEVEL = 0.38;          // les échantillons sont normalisés à 0,85 de crête
+    // Les échantillons sont normalisés à 0,85 de crête. Le niveau descend
+    // légèrement par rapport à la version précédente : il y a désormais près
+    // de trois fois plus d'événements, donc plus d'énergie cumulée.
+    const LEVEL = 0.32;
     let buf = null, at = null, loading = null;
 
     const load = () => loading ||= fetch('/assets/keys.mp3')
@@ -56,23 +59,38 @@
       })
       .catch(() => { buf = null; });
 
-    /* Trois familles puisées dans la même banque : les graves pour la barre
-       d'espace, le milieu pour les lettres, les plus secs pour l'effacement. */
-    const pick = (lo, hi) => lo + Math.floor(Math.random() * (hi - lo + 1));
-    const play = (i, mul) => {
+    /* Une lettre tombe chaque fois sur une touche différente : on pioche.
+       L'espace et l'effacement, eux, sont UNE touche physique — le même son
+       doit revenir à chaque appui, sinon une rafale de retours arrière fait
+       entendre douze claviers au lieu de douze appuis sur la même touche.
+       D'où deux index figés, et presque aucune variation de hauteur sur eux. */
+    const SPACE_I = 0;    // le timbre le plus grave de la banque : une grande touche
+    const BACK_I  = 16;   // sec et bref
+
+    const play = (i, mul, jitter, rate) => {
       if (!buf || ac.state !== 'running') return;
       const src = ac.createBufferSource(); src.buffer = buf;
-      src.playbackRate.value = 0.94 + Math.random() * 0.13;
+      src.playbackRate.value = (rate || 1) + (Math.random() * 2 - 1) * jitter;
       const g = ac.createGain();
-      g.gain.value = LEVEL * mul * (0.82 + Math.random() * 0.34);
+      g.gain.value = LEVEL * mul * (1 + (Math.random() * 2 - 1) * (jitter > 0.05 ? 0.17 : 0.09));
       src.connect(g); g.connect(bus);
       src.start(ac.currentTime, at[i], DUR);
     };
+
+    // deux fois de suite la même touche est rare quand on écrit
+    let last = -1;
+    const letter = () => {
+      let i; do { i = 3 + Math.floor(Math.random() * 13); } while (i === last);
+      return (last = i);
+    };
     return {
       wake:  () => { load(); return ac.resume(); },
-      key:   () => play(pick(3, 15), 1),
-      space: () => play(pick(0, 2),  1.2),
-      back:  () => play(pick(12, 17), 1.05),
+      key:   () => play(letter(), 1,    0.07),
+      // 0,90 : l'espace est joué plus bas, donc plus creux et plus long.
+      // C'est une exagération assumée — une grande touche ne doit jamais
+      // pouvoir être confondue avec une lettre.
+      space: () => play(SPACE_I,  1.3,  0.012, 0.90),
+      back:  () => play(BACK_I,   1.05, 0.010),
     };
   })();
 
@@ -80,12 +98,14 @@
      de chaque mot — c'est lui qu'on entend vraiment — et un peu plus d'un
      caractère sur deux ensuite, au hasard. Un « une lettre sur deux » strict
      recréerait une pulsation régulière, donc une autre mitraillette. */
-  /* Densité sonore. L'espace sonne toujours — c'est la touche la plus large
-     d'un vrai clavier, et elle donne le rythme des mots. Les autres lettres
-     sonnent une fois sur quatre environ. Faire sonner en plus la première
-     lettre de chaque mot, comme avant, ajoutait un son garanti tous les cinq
-     caractères : c'est ce qui donnait la mitraillette.                      */
-  const SOUND_RATE = 0.22;
+  /* Densité sonore. Sur un vrai clavier, chaque touche fait un bruit — sans
+     exception. Toute valeur sous 1 se voit : l'œil reçoit toutes les lettres,
+     l'oreille n'en reçoit qu'une partie, et le décalage se remarque.
+     La mitraillette des premières versions ne venait pas du nombre de sons
+     mais de leur uniformité — un timbre unique, un rythme régulier, un
+     limiteur trop lent. Ces trois causes étant traitées, la densité réelle
+     redevient tenable.                                                      */
+  const SOUND_RATE = 1;
 
   const L = {
     yt:   real.querySelector('a[href*="youtube"]')?.href      || '#',
@@ -114,7 +134,7 @@
     { t: ', and finding ' },
     { a: [L.lab, 'solutions to problems nobody else has'] },
     { t: '.' }, { p: 1 },
-    { a: [L.contact, 'Say hello'] }, { t: '.' },
+    { a: [L.contact, 'Say hello'] }, { t: ' ;)' },
   ];
 
   const REST = { '.': 540, '!': 540, '?': 540, ':': 300, ';': 300, ',': 190, '—': 240 };
