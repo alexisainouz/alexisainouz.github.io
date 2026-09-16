@@ -1,0 +1,227 @@
+<!doctype html>
+<!--
+  Calculateur de pâte à pizza.
+  Page autonome : Jekyll la recopie telle quelle, aucun gabarit.
+  La formule vient du calculateur d'origine de frenchguycooking.com et n'a
+  pas été touchée — seule la mise en œuvre change (plus de jQuery).
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pizza dough calculator — Alexis Aïnouz</title>
+<meta name="description" content="How many pizzas, how big, how wet. The dough maths, done for you.">
+<link rel="canonical" href="https://alexisainouz.com/lab/pizza-dough/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Pizza dough calculator — Alexis Aïnouz">
+<meta property="og:description" content="How many pizzas, how big, how wet. The dough maths, done for you.">
+<meta property="og:url" content="https://alexisainouz.com/lab/pizza-dough/">
+<meta property="og:image" content="https://alexisainouz.com/assets/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+  /* ─────────────────────────────────────────────────────────────
+     Cinq tailles, pas une de plus. Chaque élément de la page se
+     range dans l'une d'elles ; c'est ce qui fait une hiérarchie
+     plutôt qu'un empilement.
+     ───────────────────────────────────────────────────────────── */
+  .tool {
+    --xl: clamp(2rem, 6vw, 3rem);   /* le titre                */
+    --l:  1.25rem;                  /* l'accroche, les questions */
+    --m:  1.0625rem;                /* le corps, le résultat     */
+    --s:  .9375rem;                 /* les précisions            */
+    --xs: .8125rem;                 /* l'ourlet                  */
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    max-width:40rem; margin-inline:auto;
+    padding:clamp(3rem,8vh,5rem) var(--gutter) 5rem;
+  }
+
+  .tool h1 { font-family:'Crimson Pro',Georgia,serif; font-weight:300;
+             font-size:var(--xl); line-height:1.1; margin:0 0 .75rem; }
+  .tool .lede { font-size:var(--l); line-height:1.5; color:var(--soft);
+                margin:0 0 3rem; max-width:32rem; }
+
+  .q { font-size:var(--l); line-height:2.2; margin:0 0 1.5rem; }
+  .q:last-of-type { margin-bottom:0; }
+
+  /* ── moins / nombre / plus ── */
+  .stepper { display:inline-flex; align-items:stretch; vertical-align:middle;
+             border:1px solid var(--hair); border-radius:2px; overflow:hidden;
+             margin:0 .15rem; }
+  .stepper button { font:inherit; font-size:var(--l); line-height:1;
+                    color:var(--paper); background:transparent; border:0;
+                    padding:.35rem .75rem; cursor:pointer; }
+  .stepper button:hover:not(:disabled) { background:color-mix(in srgb,var(--paper) 14%,transparent); }
+  .stepper button:disabled { opacity:.35; cursor:default; }
+  .stepper input { font:inherit; font-size:var(--l); font-variant-numeric:tabular-nums;
+                   width:3rem; text-align:center; color:var(--paper);
+                   background:color-mix(in srgb,var(--paper) 8%,transparent);
+                   border:0; border-inline:1px solid var(--hair); padding:.35rem 0; }
+  .stepper input:focus { outline:none; background:color-mix(in srgb,var(--paper) 16%,transparent); }
+  .stepper input::-webkit-outer-spin-button,
+  .stepper input::-webkit-inner-spin-button { -webkit-appearance:none; margin:0; }
+  .stepper input[type=number] { -moz-appearance:textfield; }
+
+  /* ── petite / moyenne / grosse ── */
+  .sizes { display:inline-flex; flex-wrap:wrap; gap:.4rem; vertical-align:middle; }
+  .sizes label { display:inline-flex; align-items:baseline; gap:.4rem; cursor:pointer;
+                 border:1px solid var(--hair); border-radius:2px;
+                 padding:.3rem .7rem; color:var(--soft); user-select:none; }
+  .sizes label:has(input:checked) { color:var(--blue); background:var(--paper);
+                                    border-color:var(--paper); }
+  .sizes input { position:absolute; opacity:0; width:0; height:0; }
+  .sizes label:has(input:focus-visible) { outline:2px solid var(--accent); outline-offset:2px; }
+  .sizes .g { font-size:var(--s); opacity:.75; }
+
+  /* ── le curseur d'hydratation ── */
+  .slider { max-width:30rem; margin-top:.5rem; }
+  .slider input[type=range] { width:100%; accent-color:var(--accent);
+                              height:28px; cursor:pointer; display:block; }
+  .ends { display:flex; justify-content:space-between; gap:1.5rem; margin:.25rem 0 0;
+          font-size:var(--s); line-height:1.4; color:var(--faint); }
+  .ends span { max-width:12rem; }
+  .ends span:last-child { text-align:right; }
+  .reading { margin:.9rem 0 0; font-size:var(--s); color:var(--soft); }
+  .reading b { font-weight:400; color:var(--paper); }
+
+  /* ── le résultat, en bloc de code ── */
+  .out { margin:3rem 0 0; padding:1.5rem 1.5rem 1.4rem;
+         border:1px solid var(--hair); border-radius:3px;
+         background:color-mix(in srgb, #000 10%, transparent);
+         font-family:var(--mono); font-size:var(--m); line-height:1.9;
+         color:var(--paper); overflow-x:auto; white-space:pre; }
+  .out .cap { display:block; font-family:'Instrument Sans',sans-serif;
+              font-size:var(--xs); letter-spacing:.18em; text-transform:uppercase;
+              color:var(--faint); margin-bottom:1rem; }
+
+  .after { margin:2rem 0 0; font-size:var(--s); color:var(--soft); }
+  .after a { color:var(--paper); text-underline-offset:3px;
+             text-decoration-color:var(--faint); }
+  .after a:hover { text-decoration-color:var(--accent); }
+  .colophon { margin-top:4rem; padding-top:1.5rem; border-top:1px solid var(--hair);
+              font-size:var(--xs); color:var(--faint); }
+  .colophon a { color:var(--faint); }
+  .colophon a:hover { color:var(--accent); }
+
+  @media (max-width:32rem) { .q { line-height:2.6; } }
+</style>
+</head>
+<body>
+<main class="tool">
+
+  <h1>Pizza dough calculator</h1>
+  <p class="lede">Nobody thinks in grams of flour. You think in pizzas.</p>
+
+  <form id="calc" autocomplete="off">
+    <p class="q">I want
+      <span class="stepper">
+        <button type="button" id="less" aria-label="One fewer pizza">−</button>
+        <input id="count" type="number" inputmode="numeric" value="2" min="1" max="60"
+               step="1" aria-label="Number of pizzas">
+        <button type="button" id="more" aria-label="One more pizza">+</button>
+      </span>
+      pizzas,
+    </p>
+
+    <p class="q">each one
+      <span class="sizes">
+        <label><input type="radio" name="size" value="150">small <span class="g">150 g</span></label>
+        <label><input type="radio" name="size" value="250" checked>medium <span class="g">250 g</span></label>
+        <label><input type="radio" name="size" value="350">large <span class="g">350 g</span></label>
+      </span>
+    </p>
+
+    <p class="q">and the dough about like this:</p>
+    <div class="slider">
+      <input id="hydration" type="range" min="50" max="70" step="1" value="57"
+             aria-label="How wet the dough is">
+      <p class="ends">
+        <span>Easier to handle, tighter crumb.</span>
+        <span>Airier and lighter, stickier to work.</span>
+      </p>
+      <p class="reading"><b id="hyd">57</b> % water. <span id="hydnote"></span></p>
+    </div>
+  </form>
+
+  <pre class="out" id="out" aria-live="polite"><span class="cap">You need</span></pre>
+
+  <p class="after">That yeast figure looks far too small. It isn't. Try it.<br>
+  If you have never made this dough before,
+  <a href="https://www.youtube.com/watch?v=mcU5k30WEuk" rel="noopener" target="_blank">watch the video first</a>.</p>
+
+  <p class="colophon">
+    A tool from <a href="https://alexisainouz.com">alexisainouz.com</a>.
+    Original maths ported to JavaScript by
+    <a href="https://twitter.com/armonge" rel="noopener" target="_blank">Andrés Reyes Monge</a>.
+  </p>
+
+</main>
+
+<script>
+(() => {
+  const el = id => document.getElementById(id);
+  const count = el('count'), hydration = el('hydration'), out = el('out');
+  const sizes = [...document.querySelectorAll('input[name=size]')];
+
+  /* Proportions d'origine, inchangées : sel 3 % de la farine, levure fraîche
+     0,2 %. Le poids total voulu se répartit entre les quatre ingrédients, donc
+     la farine s'obtient en divisant par la somme des proportions.            */
+  const SALT = 0.03, YEAST = 0.002;
+
+  // 0,1 g près, sans afficher un zéro décimal inutile
+  const show = n => (Math.round(n * 10) / 10).toFixed(1).replace(/\.0$/, '');
+
+  const MIN = 1, MAX = 60;
+  const bound = v => Math.min(Math.max(v, MIN), MAX);
+  const clampCount = () => {
+    const v = parseInt(count.value, 10);
+    return bound(isFinite(v) ? v : MIN);
+  };
+
+  const line = (name, value) =>
+    name.padEnd(7) + String(value).padStart(6) + ' g';
+
+  const update = () => {
+    const n = clampCount();
+    const g = parseFloat((sizes.find(r => r.checked) || {}).value);
+    const h = parseFloat(hydration.value);
+
+    el('hyd').textContent = h;
+    el('hydnote').textContent =
+      h <= 55 ? 'Firm. Forgiving.' :
+      h <= 60 ? 'The one to start with.' :
+      h <= 65 ? 'Getting soft. Flour your hands.' :
+                'Very wet. You will need practice.';
+
+    const flour = (n * g) / (1 + h / 100 + SALT + YEAST);
+    const rows = [
+      line('flour', show(flour)),
+      line('water', show(flour * h / 100)),
+      line('salt',  show(flour * SALT)),
+      line('yeast', show(flour * YEAST)),
+    ].join('\n');
+
+    out.innerHTML = '<span class="cap">You need</span>';
+    out.appendChild(document.createTextNode(rows));
+
+    // Les bornes se voient : un bouton mort doit avoir l'air mort.
+    el('less').disabled = n <= MIN;
+    el('more').disabled = n >= MAX;
+  };
+
+  // La borne s'applique APRÈS le pas, sinon « − » depuis 1 descend à 0.
+  const nudge = d => { count.value = bound(clampCount() + d); update(); };
+  el('less').addEventListener('click', () => nudge(-1));
+  el('more').addEventListener('click', () => nudge(1));
+  count.addEventListener('blur', () => { count.value = clampCount(); update(); });
+
+  [count, hydration, ...sizes].forEach(i => {
+    i.addEventListener('input', update);
+    i.addEventListener('change', update);
+  });
+  document.getElementById('calc').addEventListener('submit', e => e.preventDefault());
+  update();
+})();
+</script>
+</body>
+</html>

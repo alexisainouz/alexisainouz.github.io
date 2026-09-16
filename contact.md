@@ -7,8 +7,10 @@ description: Get in touch.
 
 # Contact
 
-<p class="lede">Brand work, press, speaking, or a question about a recipe —
+<p class="lede" id="ask">Brand work, press, speaking, or a question about a recipe —
 write below and it reaches me directly.</p>
+
+<p class="lede" id="sent" hidden role="status">Your message is on its way.</p>
 
 {% if site.form.access_key != "" %}
 <form id="contact-form" class="form" action="{{ site.form.endpoint }}" method="POST">
@@ -48,6 +50,11 @@ write below and it reaches me directly.</p>
 (() => {
   const f = document.getElementById('contact-form');
   if (!f) return;
+
+  /* Revenir ici par le bouton Retour après un envoi : certains navigateurs
+     restaurent la page telle qu'on l'a laissée, donc sans formulaire. On
+     repart alors d'une page neuve, pour qu'un second message reste possible. */
+  window.addEventListener('pageshow', e => { if (e.persisted) location.reload(); });
   const note = f.querySelector('.form-note');
   f.addEventListener('submit', async e => {
     e.preventDefault();
@@ -59,13 +66,18 @@ write below and it reaches me directly.</p>
       // Web3Forms peut répondre 200 avec { success: false } : le code HTTP ne suffit pas.
       const data = await r.json().catch(() => ({}));
       if (!r.ok || data.success === false) throw new Error(data.message || r.status);
-      f.reset();
-      note.textContent = 'Thank you — your message is on its way.';
-      note.className = 'form-note ok';
+      /* Le formulaire a fini son travail : il disparaît. La confirmation prend
+         sa place en haut de page, à la taille du texte d'accroche — c'est
+         l'information la plus importante de cet écran.                       */
+      document.querySelector('main > h1').textContent = 'Thank you.';
+      document.getElementById('ask').hidden = true;
+      document.getElementById('sent').hidden = false;
+      f.remove();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } catch (err) {
+      // On ne vide jamais le formulaire sur erreur : le texte tapé doit survivre.
       note.textContent = 'Something went wrong. Please try again in a moment.';
       note.className = 'form-note ko';
-    } finally {
       btn.disabled = false;
     }
   });

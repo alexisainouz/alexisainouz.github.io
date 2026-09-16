@@ -32,11 +32,13 @@ permalink: /
         <a href="{{ site.links[2].url }}" rel="me noopener" target="_blank">entrepreneur</a>
         for more than twenty years. I now
         <a href="{{ site.links_secondary[0].url }}" rel="me noopener" target="_blank">freelance</a>
-        with teams who need creativity, and spend the rest of my time
-        <a href="{{ site.links[1].url }}" rel="me noopener" target="_blank">dancing, sailing, cycling</a>,
-        and finding <a href="{{ '/lab/' | relative_url }}">solutions to problems nobody else has</a>.</p>
+        as a creative director — for brands that want one who has also been the brand.</p>
 
         <p><a href="{{ '/contact/' | relative_url }}">Say hello</a> ;)</p>
+
+        <p class="say-end">PS — yes,
+        <a href="{{ '/lab/pizza-dough/' | relative_url }}">the pizza calculator</a>
+        still exists.</p>
       </div>
     </div>
   </div>

@@ -113,8 +113,7 @@
     co:   real.querySelector('a[href*="salutcompany"]')?.href || '#',
     li:   real.querySelector('a[href*="linkedin"]')?.href     || '#',
     malt: real.querySelector('a[href*="malt"]')?.href         || '#',
-    ig:   real.querySelector('a[href*="instagram"]')?.href    || '#',
-    lab: '/lab/', contact: '/contact/',
+    lab: '/lab/', contact: '/contact/', pizza: '/lab/pizza-dough/',
   };
 
   // t = texte · a = lien · c = mot pensé puis corrigé · typo = faute rattrapée
@@ -129,12 +128,11 @@
     { t: ' tools for cooks.' }, { p: 1 },
     { t: 'I have been an ' }, { a: [L.li, 'entrepreneur'] },
     { t: ' for more than twenty years. I now ' }, { a: [L.malt, 'freelance'] },
-    { t: ' with teams who need creativity, and spend the rest of my time ' },
-    { a: [L.ig, 'dancing, sailing, cycling'] },
-    { t: ', and finding ' },
-    { a: [L.lab, 'solutions to problems nobody else has'] },
-    { t: '.' }, { p: 1 },
-    { a: [L.contact, 'Say hello'] }, { t: ' ;)' },
+    { t: ' as a creative director — for brands that want one who has also been the brand.' },
+    { p: 1 },
+    { a: [L.contact, 'Say hello'] }, { t: ' ;)' }, { ps: 1 },
+    { t: 'PS — yes, ' }, { a: [L.pizza, 'the pizza calculator'] },
+    { t: ' still exists.' },
   ];
 
   const REST = { '.': 540, '!': 540, '?': 540, ':': 300, ';': 300, ',': 190, '—': 240 };
@@ -295,9 +293,11 @@
         await type(step.c[1]);
       }
       else if (step.br) { node.appendChild(document.createElement('br')); prev = ' '; await wait(320); }
-      else if (step.p) {
-        await wait(560);
-        para = document.createElement('p'); stage.appendChild(para); node = para; prev = ' ';
+      else if (step.p || step.ps) {
+        await wait(step.ps ? 900 : 560);   // on marque un temps avant l'après-coup
+        para = document.createElement('p');
+        if (step.ps) para.className = 'say-end';
+        stage.appendChild(para); node = para; prev = ' ';
       }
     }
     await wait(700);

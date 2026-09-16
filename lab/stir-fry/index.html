@@ -1,0 +1,172 @@
+<!doctype html>
+<!--
+  Générateur de stir-fry.
+  Page autonome : Jekyll la recopie telle quelle, aucun gabarit.
+
+  Repris du générateur d'origine de frenchguycooking.com. La mécanique est
+  inchangée — un titre pompeux, un nom, puis cinq ingrédients tirés au sort
+  parmi ceux qu'on a cochés. Le répertoire de noms, lui, a changé : il tirait
+  des patronymes chinois associés à des grades militaires, ce qui reposait sur
+  le cliché du nom de restaurant chinois générique. La blague tient à l'écart
+  entre la grandiloquence et le vide-frigo, pas à une origine : des noms
+  d'ustensiles et de jours de la semaine la servent mieux.
+-->
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Stir-fry generator — Alexis Aïnouz</title>
+<meta name="description" content="The fridge decides the menu. This decides the name.">
+<link rel="canonical" href="https://alexisainouz.com/lab/stir-fry/">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Stir-fry generator — Alexis Aïnouz">
+<meta property="og:description" content="The fridge decides the menu. This decides the name.">
+<meta property="og:url" content="https://alexisainouz.com/lab/stir-fry/">
+<meta property="og:image" content="https://alexisainouz.com/assets/share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="stylesheet" href="/assets/style.css">
+<style>
+  main { max-width:44rem; margin-inline:auto; padding:clamp(3rem,8vh,5rem) var(--gutter) 5rem; }
+  h1 { font-family:'Crimson Pro',Georgia,serif; font-weight:300;
+       font-size:clamp(2rem,6vw,3rem); line-height:1.1; margin:0 0 .75rem; }
+  .lede { font-size:clamp(1.0625rem,2vw,1.25rem); line-height:1.5;
+          color:var(--soft); margin:0 0 2.5rem; max-width:32rem; }
+
+  .dish { min-height:9rem; display:flex; align-items:center;
+          border-block:1px solid var(--hair); padding:2rem 0; margin:0 0 1.75rem; }
+  .dish p { font-family:'Crimson Pro',Georgia,serif; font-weight:300;
+            font-size:clamp(1.75rem,5.5vw,2.75rem); line-height:1.15;
+            margin:0; letter-spacing:-.01em; }
+  .dish .who { display:block; color:var(--accent); }
+
+  .go { font:inherit; font-size:.8125rem; letter-spacing:.16em; text-transform:uppercase;
+        color:var(--blue); background:var(--paper); border:0; border-radius:2px;
+        padding:.9rem 1.6rem; cursor:pointer; }
+  .go:hover { background:var(--accent); color:var(--paper); }
+
+  details { margin-top:3.5rem; border-top:1px solid var(--hair); padding-top:1.5rem; }
+  summary { cursor:pointer; font-size:.6875rem; letter-spacing:.18em;
+            text-transform:uppercase; color:var(--faint); }
+  summary:hover { color:var(--soft); }
+  .group { margin-top:1.75rem; }
+  .group h2 { font-size:.6875rem; font-weight:400; letter-spacing:.16em;
+              text-transform:uppercase; color:var(--soft); margin:0 0 .75rem; }
+  .group div { display:flex; flex-wrap:wrap; gap:.5rem; }
+  .group label { display:inline-flex; align-items:center; gap:.45rem;
+                 border:1px solid var(--hair); border-radius:999px;
+                 padding:.4rem .85rem; font-size:.9375rem; color:var(--soft);
+                 cursor:pointer; user-select:none; }
+  .group label:has(input:checked) { color:var(--paper); border-color:var(--soft); }
+  .group input { accent-color:var(--accent); margin:0; }
+  .warn { margin:1.5rem 0 0; color:var(--accent); font-size:.9375rem; }
+  .warn:empty { display:none; }
+
+  .colophon { margin-top:4rem; padding-top:1.5rem; border-top:1px solid var(--hair);
+              font-size:.8125rem; color:var(--faint); }
+  .colophon a { color:var(--faint); }
+  .colophon a:hover { color:var(--accent); }
+</style>
+</head>
+<body>
+<main>
+
+  <h1>Stir-fry generator</h1>
+  <p class="lede">For the nights when the fridge decides the menu.
+  Press the button, cook what it says.</p>
+
+  <div class="dish" id="dish" aria-live="polite">
+    <p><span class="who">Press the button.</span></p>
+  </div>
+
+  <button class="go" id="go" type="button">Another one</button>
+
+  <details>
+    <summary>Only have some of this? Narrow it down</summary>
+
+    <div id="groups"></div>
+    <p class="warn" id="warn" role="status"></p>
+  </details>
+
+  <p class="colophon">A tool from <a href="https://alexisainouz.com">alexisainouz.com</a>.</p>
+
+</main>
+
+<script>
+(() => {
+  const GROUPS = [
+    { key: 'protein', label: 'Protein',
+      items: ['Beef','Chicken','Pork','Shrimps','Tofu'] },
+    { key: 'veg', label: 'Vegetable',
+      items: ['Broccoli','Cauliflower','Mushroom','Cabbage','Pak choi','Bell pepper',
+              'Celery','Onion','Bamboo shoot','Carrot'] },
+    { key: 'crunch', label: 'Crunch',
+      items: ['Cashew nuts','Peanuts','Almonds','Sesame seeds','Chillies'] },
+    { key: 'herb', label: 'Herb',
+      items: ['Basil','Thai basil','Mint','Coriander','Parsley','Spring onions'] },
+    { key: 'carb', label: 'Carb',
+      items: ['Rice','Noodles','Anything solid','No carbs needed'] },
+  ];
+
+  const TITLES = ['Mister','Miss','Colonel','General','Chef','Lady','Old','Madam',
+                  'King','Princess'];
+  const NAMES  = ['Wok','Ladle','Cleaver','Colander','Whisk','Skillet','Teaspoon',
+                  'Pantry','Cupboard','Kettle','Tuesday','Sunday','Midnight',
+                  'Leftovers','Tupperware','Chopstick','Sieve','Saucepan'];
+
+  const pick = a => a[Math.floor(Math.random() * a.length)];
+
+  const groupsEl = document.getElementById('groups');
+  const dishEl   = document.getElementById('dish').querySelector('p');
+  const warnEl   = document.getElementById('warn');
+
+  GROUPS.forEach(g => {
+    const wrap = document.createElement('div');
+    wrap.className = 'group';
+    const h = document.createElement('h2'); h.textContent = g.label; wrap.appendChild(h);
+    const row = document.createElement('div');
+    g.items.forEach(item => {
+      const id = g.key + '-' + item.replace(/\W+/g, '').toLowerCase();
+      const label = document.createElement('label');
+      label.setAttribute('for', id);
+      const box = document.createElement('input');
+      box.type = 'checkbox'; box.id = id; box.checked = true;
+      box.dataset.group = g.key;
+      const txt = document.createElement('span'); txt.textContent = item;
+      label.append(box, txt); row.appendChild(label);
+    });
+    wrap.appendChild(row); groupsEl.appendChild(wrap);
+  });
+
+  // Ce que l'utilisateur a laissé coché, par famille
+  const chosen = key => [...groupsEl.querySelectorAll('input[data-group="' + key + '"]')]
+    .filter(b => b.checked)
+    .map(b => b.nextElementSibling.textContent);
+
+  const newDish = () => {
+    /* Le générateur d'origine plantait dès qu'une famille était entièrement
+       décochée : il tirait dans un tableau vide. On le dit plutôt que de casser. */
+    const empty = GROUPS.filter(g => chosen(g.key).length === 0).map(g => g.label);
+    if (empty.length) {
+      warnEl.textContent = 'Tick at least one ' + empty.join(', one ').toLowerCase() + '.';
+      return;
+    }
+    warnEl.textContent = '';
+
+    const [protein, veg, crunch, herb, carb] = GROUPS.map(g => pick(chosen(g.key)));
+    const who = pick(TITLES) + ' ' + pick(NAMES) + "'s";
+    const what = [protein, veg, crunch, herb].join(', ').toLowerCase();
+    const end = carb === 'No carbs needed' ? 'no carbs needed' : carb.toLowerCase();
+
+    dishEl.innerHTML = '';
+    const line = document.createElement('span');
+    line.className = 'who'; line.textContent = who;
+    dishEl.append(line, document.createTextNode(what + ', and ' + end + ' stir-fry.'));
+  };
+
+  document.getElementById('go').addEventListener('click', newDish);
+  groupsEl.addEventListener('change', () => { warnEl.textContent = ''; });
+  newDish();
+})();
+</script>
+</body>
+</html>

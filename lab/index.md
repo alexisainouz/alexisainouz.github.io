@@ -6,18 +6,23 @@ description: Small tools I built to solve a specific problem, usually my own.
 
 # Lab
 
-<p class="lede">Small tools I built to solve one specific problem — usually my own.
-Most are about food. Not all of them.</p>
+<p class="lede">Small tools that do one thing each, and nothing else.
+Most are about food.</p>
 
-A dough calculator that does the maths I kept redoing on the back of an envelope. A
-stir-fry generator for the nights when the fridge decides the menu. A pantry calculator,
-because knowing what you have is most of the work.
+I build them because I got tired of doing the same arithmetic twice. It turned out
+other people were doing it too.
 
-They are rough on purpose. Each one is a single page that does a single thing, and
-nothing else.
+They are plain on purpose: one page, no account, no cookie banner, nothing to install.
 
 <ul class="toys">
-  <li class="empty">The first ones land here shortly.</li>
+  <li><a href="/lab/pizza-dough/">
+        <span class="name">Pizza dough calculator</span>
+        <span class="what">How many pizzas, of which size. It works out the rest.</span>
+      </a></li>
+  <li><a href="/lab/stir-fry/">
+        <span class="name">Stir-fry generator</span>
+        <span class="what">The fridge decides the menu. This decides the name.</span>
+      </a></li>
 </ul>
 
 <!--

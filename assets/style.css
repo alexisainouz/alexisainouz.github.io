@@ -89,7 +89,7 @@ header.site nav a:hover { color:var(--paper); border-bottom-color:var(--accent);
 
 main :is(p,ul,ol,h2,h3):not([class]) { max-width:var(--measure); }
 main > h1 { margin:0 0 1.25rem; max-width:18ch;
-            font-family:'Crimson Pro',Georgia,serif; font-weight:300; text-transform:capitalize;
+            font-family:'Crimson Pro',Georgia,serif; font-weight:300;
             font-size:clamp(2.5rem,7vw,4.25rem); line-height:1.02; letter-spacing:-.015em; }
 main h3 { font-family:'Crimson Pro',Georgia,serif; }
 .lede { font-size:clamp(1.0625rem,2vw,1.25rem); line-height:1.5; color:var(--soft); max-width:32rem; }
