@@ -26,8 +26,11 @@
        niveau choisi saturerait sur les rafales — un grésillement, pas un son
        plus fort. Il ne s'entend pas, il empêche seulement le débordement.     */
     const comp = ac.createDynamicsCompressor();
-    comp.threshold.value = -12; comp.knee.value = 12;
-    comp.ratio.value = 6; comp.attack.value = 0.003; comp.release.value = 0.12;
+    comp.threshold.value = -6; comp.knee.value = 10;
+    comp.ratio.value = 4; comp.attack.value = 0.003; comp.release.value = 0.05;
+    // Rétablissement court : une frappe survient toutes les ~45 ms. Un temps
+    // plus long et le limiteur reste serré en permanence, fondant les frappes
+    // les unes dans les autres au lieu d'écrêter les seules crêtes.
     const bus = ac.createGain();
     bus.connect(comp); comp.connect(ac.destination);
 
@@ -82,7 +85,12 @@
      de chaque mot — c'est lui qu'on entend vraiment — et un peu plus d'un
      caractère sur deux ensuite, au hasard. Un « une lettre sur deux » strict
      recréerait une pulsation régulière, donc une autre mitraillette. */
-  const SOUND_RATE = 0.55;
+  /* Densité sonore. L'espace sonne toujours — c'est la touche la plus large
+     d'un vrai clavier, et elle donne le rythme des mots. Les autres lettres
+     sonnent une fois sur quatre environ. Faire sonner en plus la première
+     lettre de chaque mot, comme avant, ajoutait un son garanti tous les cinq
+     caractères : c'est ce qui donnait la mitraillette.                      */
+  const SOUND_RATE = 0.22;
 
   const L = {
     yt:   real.querySelector('a[href*="youtube"]')?.href      || '#',
@@ -111,7 +119,7 @@
     { t: ', and finding ' },
     { a: [L.lab, 'solutions to problems nobody else has'] },
     { t: '.' }, { p: 1 },
-    { a: [L.contact, 'Here is how to reach out to me'] }, { t: '.' },
+    { a: [L.contact, 'Say hello'] }, { t: '.' },
   ];
 
   const REST = { '.': 540, '!': 540, '?': 540, ':': 300, ';': 300, ',': 190, '—': 240 };
@@ -174,7 +182,7 @@
     if (last.nodeType === 3 && last.data.length > 1) last.data = last.data.slice(0, -1);
     else last.remove();
   };
-  const audible = ch => ch === ' ' || prev === ' ' || Math.random() < SOUND_RATE;
+  const audible = ch => ch === ' ' || Math.random() < SOUND_RATE;
 
   async function type(str, ms) {
     for (const ch of str) {
@@ -189,7 +197,7 @@
   async function erase(n, ms = 34) {
     for (let i = 0; i < n; i++) {
       if (stopped) return;
-      drop(); if (sound && Keys && Math.random() < 0.7) Keys.back();
+      drop(); if (sound && Keys && Math.random() < 0.38) Keys.back();
       await wait(ms);
     }
   }
