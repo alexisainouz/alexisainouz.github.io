@@ -20,26 +20,61 @@
     let ac = null;
     try { ac = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
     if (!ac) return null;
-    const noise = ac.createBuffer(1, ac.sampleRate * 0.06, ac.sampleRate);
+
+    /* Les frappes se chevauchent au rythme réel : deux ou trois sons coexistent
+       en permanence et leurs amplitudes s'additionnent. Sans ce limiteur, le
+       niveau choisi saturerait sur les rafales — un grésillement, pas un son
+       plus fort. Il ne s'entend pas, il empêche seulement le débordement.     */
+    const comp = ac.createDynamicsCompressor();
+    comp.threshold.value = -12; comp.knee.value = 12;
+    comp.ratio.value = 6; comp.attack.value = 0.003; comp.release.value = 0.12;
+    const bus = ac.createGain();
+    bus.connect(comp); comp.connect(ac.destination);
+
+    /* Bruit rose (-3 dB/octave) plutôt que blanc : le blanc porte autant
+       d'énergie dans les aigus que dans les graves, d'où le sifflement.      */
+    const noise = ac.createBuffer(1, ac.sampleRate * 0.12, ac.sampleRate);
     const d = noise.getChannelData(0);
-    for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
-    const hit = (level, cut, decay) => {
+    let b0=0, b1=0, b2=0, b3=0, b4=0, b5=0, b6=0;
+    for (let i = 0; i < d.length; i++) {
+      const w = Math.random() * 2 - 1;
+      b0 = 0.99886*b0 + w*0.0555179;  b1 = 0.99332*b1 + w*0.0750759;
+      b2 = 0.96900*b2 + w*0.1538520;  b3 = 0.86650*b3 + w*0.3104856;
+      b4 = 0.55000*b4 + w*0.5329522;  b5 = -0.7616*b5 - w*0.0168980;
+      d[i] = (b0+b1+b2+b3+b4+b5+b6 + w*0.5362) * 0.11;
+      b6 = w * 0.115926;
+    }
+
+    const LEVEL = 0.32;   // amplitude crête, réglée à l'oreille sur banc d'essai
+
+    const hit = (mul, cut, decay) => {
       if (ac.state !== 'running') return;
+      const t = ac.currentTime;
+
       const src = ac.createBufferSource(); src.buffer = noise;
+      src.playbackRate.value = 0.9 + Math.random() * 0.2;
+
+      const hp = ac.createBiquadFilter();       // coupe le grave inutile
+      hp.type = 'highpass'; hp.frequency.value = 90; hp.Q.value = 0.7;
+
       const lp = ac.createBiquadFilter(); lp.type = 'lowpass';
-      lp.frequency.value = cut * (0.82 + Math.random() * 0.36);
-      const g = ac.createGain(), t = ac.currentTime;
-      g.gain.setValueAtTime(0, t);
-      g.gain.linearRampToValueAtTime(level * (0.65 + Math.random() * 0.7), t + 0.002);
+      lp.frequency.value = cut * (0.88 + Math.random() * 0.24);
+      lp.Q.value = 0.7;   // sous 1 : pas de bosse de résonance, donc pas de métal
+
+      const g = ac.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.linearRampToValueAtTime(LEVEL * mul * (0.72 + Math.random() * 0.56),
+                                     t + 0.012);   // 12 ms : une frappe, pas un clic
       g.gain.exponentialRampToValueAtTime(0.0001, t + decay);
-      src.connect(lp); lp.connect(g); g.connect(ac.destination);
-      src.start(t); src.stop(t + decay + 0.01);
+
+      src.connect(hp); hp.connect(lp); lp.connect(g); g.connect(bus);
+      src.start(t); src.stop(t + decay + 0.02);
     };
     return {
       wake:  () => ac.resume(),
-      key:   () => hit(0.036, 2100, 0.030),
-      space: () => hit(0.046, 1250, 0.045),
-      back:  () => hit(0.026, 1500, 0.026),
+      key:   () => hit(1,    1500, 0.042),
+      space: () => hit(1.28,  930, 0.061),
+      back:  () => hit(0.72, 1170, 0.036),
     };
   })();
 
