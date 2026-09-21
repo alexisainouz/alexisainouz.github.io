@@ -128,7 +128,7 @@
     { t: ' tools for cooks.' }, { p: 1 },
     { t: 'I have been an ' }, { a: [L.li, 'entrepreneur'] },
     { t: ' for more than twenty years. I now ' }, { a: [L.malt, 'freelance'] },
-    { t: ' as a creative director — for brands that want one who has also been the brand.' },
+    { t: ' as a creative director.' },
     { p: 1 },
     { a: [L.contact, 'Say hello'] }, { t: ' ;)' }, { ps: 1 },
     { t: 'PS — yes, ' }, { a: [L.pizza, 'the pizza calculator'] },
