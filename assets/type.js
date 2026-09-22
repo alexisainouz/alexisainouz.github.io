@@ -117,8 +117,9 @@
   };
 
   // t = texte · a = lien · c = mot pensé puis corrigé · typo = faute rattrapée
+  // smile = le portrait passe au sourire, pendant que la ligne s'écrit
   const SCRIPT = [
-    { t: 'I’m Alexis Gabriel Aïnouz — Alex is fine.' }, { br: 1 },
+    { t: 'I’m Alexis Gabriel Aïnouz — Alex is fine.' }, { p: 1 },
     { t: 'I started making ' }, { c: ['pathological', 'obsessive'] },
     { t: ' food films on ' }, { a: [L.yt, 'YouTube'] },
     { t: ', 235 million views ago. Along the way I wrote ' },
@@ -130,7 +131,7 @@
     { t: ' for more than twenty years. I now ' }, { a: [L.malt, 'freelance'] },
     { t: ' as a creative director.' },
     { p: 1 },
-    { a: [L.contact, 'Say hello'] }, { t: ' ;)' }, { ps: 1 },
+    { smile: 1 }, { a: [L.contact, 'Say hello'] }, { t: ' ;)' }, { ps: 1 },
     { t: 'PS — yes, ' }, { a: [L.pizza, 'the pizza calculator'] },
     { t: ' still exists.' },
   ];
@@ -199,7 +200,7 @@
   };
   let handover = null;
   const toSmile = () => {
-    if (!smile) { return; }
+    if (!smile || hero?.classList.contains('is-smiling')) return;   // déjà en cours
     smile.currentTime = 0;
     smile.play().catch(() => {});
     hero?.classList.add('is-smiling');   // le fondu est en CSS
@@ -310,6 +311,7 @@
         await erase(step.c[0].length, 26); await wait(140);
         await type(step.c[1]);
       }
+      else if (step.smile) toSmile();
       else if (step.br) { node.appendChild(document.createElement('br')); prev = ' '; await wait(320); }
       else if (step.p || step.ps) {
         await wait(step.ps ? 900 : 560);   // on marque un temps avant l'après-coup
