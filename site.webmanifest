@@ -3,8 +3,8 @@
   "short_name": "Alex",
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#2136b0",
-  "background_color": "#2136b0",
+  "theme_color": "#2b3bf0",
+  "background_color": "#2b3bf0",
   "icons": [
     { "src": "/assets/icon-192.png", "sizes": "192x192", "type": "image/png" },
     { "src": "/assets/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }

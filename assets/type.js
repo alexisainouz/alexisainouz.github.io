@@ -184,11 +184,30 @@
   });
   btnAgain.addEventListener('click', e => { e.stopPropagation(); run(); });
 
-  const portrait = document.querySelector('video.hero-bg');
-  let holding = false;
-  if (portrait) portrait.addEventListener('play', () => {
-    if (holding) { portrait.pause(); portrait.currentTime = 0; }
-  });
+  /* Deux plans superposés. Le premier tourne en boucle pendant qu'on écrit :
+     il respire et cligne des yeux, sans quoi le portrait est une photographie.
+     Le second arrive à la fin, en fondu, et s'arrête sur le sourire.          */
+  const hero  = document.querySelector('.hero');
+  const alive = document.querySelector('.hero-bg.is-idle');
+  const smile = document.querySelector('.hero-bg.is-smile');
+
+  const toIdle = () => {
+    clearTimeout(handover);
+    hero?.classList.remove('is-smiling');
+    if (smile) { smile.pause(); smile.currentTime = 0; }
+    if (alive) { alive.currentTime = 0; alive.play().catch(() => {}); }
+  };
+  let handover = null;
+  const toSmile = () => {
+    if (!smile) { return; }
+    smile.currentTime = 0;
+    smile.play().catch(() => {});
+    hero?.classList.add('is-smiling');   // le fondu est en CSS
+    // Une fois le fondu terminé, la boucle est cachée : la laisser tourner
+    // ne ferait que décoder des images que personne ne voit.
+    clearTimeout(handover);
+    handover = setTimeout(() => alive?.pause(), 600);
+  };
 
   let running = false, stopped = true, stage = null, para = null, node = null, prev = ' ';
 
@@ -244,8 +263,7 @@
     running = false; stopped = true;
     stage?.remove(); stage = null;
     real.hidden = false;
-    holding = false;
-    if (portrait) portrait.play().catch(() => {});
+    toSmile();
     store.set('typed', '1');
     dock.classList.remove('is-playing');
     document.removeEventListener('pointerdown', skip);
@@ -267,7 +285,7 @@
 
     dock.classList.add('is-playing');
     if (sound && Keys) Keys.wake().catch(() => {});
-    if (portrait) { holding = true; portrait.pause(); portrait.currentTime = 0; }
+    toIdle();
 
     document.addEventListener('pointerdown', skip);
     document.addEventListener('keydown', skip);
@@ -304,6 +322,7 @@
     finish();
   }
 
-  if (store.get('typed') === '1') { if (portrait) portrait.play().catch(() => {}); }
+  // Déjà venu : pas de frappe, et le sourire est l'état au repos de la page.
+  if (store.get('typed') === '1') toSmile();
   else run();
 })();

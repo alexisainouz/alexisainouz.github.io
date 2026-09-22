@@ -4,13 +4,19 @@ permalink: /
 ---
 
 <section class="hero">
-  {% if site.profile.video != "" %}
-  <video class="hero-bg" autoplay muted playsinline
+  {% if site.profile.idle != "" %}
+  <video class="hero-bg is-idle" autoplay loop muted playsinline
          poster="{{ site.profile.photo | relative_url }}" aria-label="{{ site.profile.name }}">
-    {% if site.profile.video_webm != "" %}<source src="{{ site.profile.video_webm | relative_url }}" type="video/webm">{% endif %}
-    <source src="{{ site.profile.video | relative_url }}" type="video/mp4">
+    {% if site.profile.idle_webm != "" %}<source src="{{ site.profile.idle_webm | relative_url }}" type="video/webm">{% endif %}
+    <source src="{{ site.profile.idle | relative_url }}" type="video/mp4">
     <img src="{{ site.profile.photo | relative_url }}" alt="{{ site.profile.name }}">
   </video>
+  {% if site.profile.smile != "" %}
+  <video class="hero-bg is-smile" muted playsinline preload="auto" aria-hidden="true">
+    {% if site.profile.smile_webm != "" %}<source src="{{ site.profile.smile_webm | relative_url }}" type="video/webm">{% endif %}
+    <source src="{{ site.profile.smile | relative_url }}" type="video/mp4">
+  </video>
+  {% endif %}
   {% else %}
   <img class="hero-bg" src="{{ site.profile.photo | relative_url }}" alt="{{ site.profile.name }}">
   {% endif %}

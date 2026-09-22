@@ -1,8 +1,9 @@
 /* ───────────────────────────────────────────────────────────────
    Tout le site est bleu. Un seul fond, aucune alternance.
-   --blue est prélevé sur le RENDU du navigateur, pas sur le fichier :
-   la vidéo passe par la gestion des couleurs, une valeur lue dans le
-   fichier ne donnerait pas le même pixel à l'écran.
+   --blue est prélevé sur la bande droite de la vidéo, là où le masque
+   rejoint l'aplat : c'est le seul endroit où une couture se verrait.
+   Reprélever après chaque nouveau tournage — un étalonnage différent
+   déplace le mur, et l'aplat doit suivre.
    ─────────────────────────────────────────────────────────────── */
 @font-face{font-family:'Crimson Pro';src:url('/assets/fonts/crimson-pro.woff2') format('woff2');
   font-weight:200 900;font-style:normal;font-display:swap;}
@@ -10,7 +11,7 @@
   font-weight:400 700;font-style:normal;font-display:swap;}
 
 :root {
-  --blue:  #2136b0;
+  --blue:  #2b3bf0;
   --accent: #d98441;   /* terre, plus chaude que le rouge Bauhaus */
   --paper: #f4f2ec;
   --soft:  color-mix(in srgb, var(--paper) 72%, transparent);
@@ -39,6 +40,10 @@ a { color:inherit; }
   object-fit:cover;object-position:36% 30%;
   -webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent 100%);
           mask-image:linear-gradient(to bottom,#000 72%,transparent 100%)}
+/* Les deux plans se superposent exactement ; seul l'opacité les départage. */
+.hero-bg.is-smile{opacity:0;transition:opacity .45s ease}
+.hero.is-smiling .hero-bg.is-smile{opacity:1}
+@media (prefers-reduced-motion: reduce){.hero-bg.is-smile{transition:none}}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;
   background:linear-gradient(to top,var(--blue) 0%,var(--blue) 54%,
     color-mix(in srgb,var(--blue) 55%,transparent) 68%,transparent 88%)}

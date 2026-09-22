@@ -10,9 +10,14 @@ url: https://alexisainouz.com
 lang: en
 
 profile:
-  photo: /assets/alex.jpg       # image fixe, affichée avant/à la place de la vidéo
-  video: /assets/alex.mp4       # laisse vide ("") pour n'afficher que l'image fixe
-  video_webm: /assets/alex.webm # même plan, format plus léger pour Chrome/Firefox
+  photo: /assets/alex.jpg        # image fixe, affichée avant/à la place des vidéos
+  # Deux plans. « idle » tourne en boucle pendant qu'on écrit : sérieux, mais
+  # vivant — il respire et cligne des yeux. « smile » arrive à la fin, en fondu,
+  # et s'arrête sur le sourire. Laisse idle vide ("") pour n'avoir que l'image.
+  idle: /assets/alex-idle.mp4
+  idle_webm: /assets/alex-idle.webm
+  smile: /assets/alex-smile.mp4
+  smile_webm: /assets/alex-smile.webm
   share: /assets/share.jpg       # vignette 1200x630 pour les partages
   name: Alexis Aïnouz
   line: >-
