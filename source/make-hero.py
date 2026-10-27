@@ -12,13 +12,16 @@ prend l'image telle quelle. Le script ne fait que :
   3. sourire (alex-smile) : les premières secondes de la prise, lues à l'envers pour
      finir sur le sourire ;
   4. image fixe (alex.jpg) : la première image de la boucle ;
-  5. encodage mp4 (H.264) et webm (VP9), sans son, dans assets/.
+  5. vignette de partage (assets/share.jpg, 1200×630) : une image du sourire, cadrée
+     plus serré (python3 source/make-hero.py share, sans refaire les vidéos) ;
+  6. encodage mp4 (H.264) et webm (VP9), sans son, dans assets/.
 
 Les réglages sont ci-dessous. Si tu changes de prise, retrouve l'extrait de boucle :
 cherche deux moments où la posture est presque la même (la tête, le croissant).
 Nécessite ffmpeg et ffprobe.
 """
 import subprocess
+import sys
 
 SRC = "source/v3-alex-eats-a-croissant.m4v"
 CUT_LEFT = 0.24        # part de la largeur retirée à gauche (le néon et sa lueur finissent vers 23 %)
@@ -27,6 +30,8 @@ LOOP_LEN = 5.9         # durée de la boucle
 FADE = 0.5             # fondu de raccord
 SMILE_LEN = 0.8        # durée du plan sourire (lu à l'envers)
 FPS = "30000/1001"
+SHARE_AT = 0.10        # instant de la vignette de partage (le sourire), en secondes
+SHARE_BOX = (0.297, 0.285, 0.594, 0.554)   # x, y, largeur, hauteur, en part de l'image
 
 
 def probe():
@@ -58,7 +63,17 @@ def encode_args(name):
     }
 
 
+def make_share():
+    w, h = probe()
+    x, y, cw, ch = SHARE_BOX
+    box = f"crop={round(w * cw)}:{round(h * ch)}:{round(w * x)}:{round(h * y)}"
+    run(["-ss", str(SHARE_AT), "-i", SRC, "-frames:v", "1", "-q:v", "1",
+         "-vf", f"{box},scale=1200:630:flags=lanczos", "assets/share.jpg"])
+
+
 def main():
+    if sys.argv[1:] == ["share"]:
+        return make_share()
     crop = crop_filter()
     tags = ["-an", "-color_primaries", "bt709", "-color_trc", "bt709", "-colorspace", "bt709"]
     L, d = LOOP_LEN, FADE
@@ -80,6 +95,7 @@ def main():
 
     # Image fixe : première image de la boucle.
     run(["-i", "assets/alex-idle.mp4", "-frames:v", "1", "-q:v", "3", "assets/alex.jpg"])
+    make_share()
 
 
 if __name__ == "__main__":
