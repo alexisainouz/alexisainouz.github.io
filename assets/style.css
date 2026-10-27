@@ -1,9 +1,9 @@
 /* ───────────────────────────────────────────────────────────────
    Tout le site est bleu. Un seul fond, aucune alternance.
-   --blue est prélevé sur la bande droite de la vidéo, là où le masque
-   rejoint l'aplat : c'est le seul endroit où une couture se verrait.
-   Reprélever après chaque nouveau tournage — un étalonnage différent
-   déplace le mur, et l'aplat doit suivre.
+   Sur l'accueil en largeur, la vidéo remplit l'écran : aucune couture.
+   En portrait, elle se fond dans l'aplat par le bas, et --blue doit
+   alors rester proche du bas du mur dans la vidéo. À reprélever si
+   l'étalonnage change.
    ─────────────────────────────────────────────────────────────── */
 @font-face{font-family:'Crimson Pro';src:url('/assets/fonts/crimson-pro.woff2') format('woff2');
   font-weight:200 900;font-style:normal;font-display:swap;}
@@ -35,11 +35,13 @@ a { color:inherit; }
   overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
 
 .hero{position:relative;isolation:isolate;overflow:hidden;min-height:100svh;
-  display:flex;align-items:center}
-.hero-bg{position:absolute;top:0;left:0;z-index:-2;width:100%;aspect-ratio:1;
-  object-fit:cover;object-position:36% 30%;
-  -webkit-mask-image:linear-gradient(to bottom,#000 72%,transparent 100%);
-          mask-image:linear-gradient(to bottom,#000 72%,transparent 100%)}
+  display:flex;align-items:flex-start}
+/* Portrait : la vidéo en haut, le texte juste en dessous. Elle se fond dans l'aplat par
+   le bas (masque). Sa hauteur est plafonnée à 66 % de l'écran pour que le texte tienne. */
+.hero-bg{position:absolute;top:0;left:0;z-index:-2;width:100%;height:min(125vw,66svh);
+  object-fit:cover;object-position:11% 50%;
+  -webkit-mask-image:linear-gradient(to bottom,#000 62%,transparent 98%);
+          mask-image:linear-gradient(to bottom,#000 62%,transparent 98%)}
 /* Les deux plans se superposent exactement ; seul l'opacité les départage. */
 .hero-bg.is-smile{opacity:0;transition:opacity .45s ease}
 .hero.is-smiling .hero-bg.is-smile{opacity:1}
@@ -47,11 +49,8 @@ a { color:inherit; }
    dégradée du plan « sourire », dès que les deux postures diffèrent. */
 .hero.is-smiling .hero-bg.is-idle{visibility:hidden;transition:visibility 0s .45s}
 @media (prefers-reduced-motion: reduce){.hero-bg.is-smile{transition:none}}
-.hero::after{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to top,var(--blue) 0%,var(--blue) 54%,
-    color-mix(in srgb,var(--blue) 55%,transparent) 68%,transparent 88%)}
 .hero-inner{width:100%;max-width:84rem;margin-inline:auto;
-  padding:5rem var(--gutter) clamp(2.5rem,6vw,4rem);
+  padding:min(94vw,49.5svh) var(--gutter) clamp(2.5rem,6vw,4rem);
   display:flex;justify-content:flex-end}
 .hero-type{width:100%;max-width:33rem}
 
@@ -73,12 +72,18 @@ a { color:inherit; }
 @media (prefers-reduced-motion: reduce){.say-stage p:last-child::after{animation:none}}
 .say-end{font-size:.72em;color:var(--soft);margin-top:1.6em}
 
-@media (min-width:52rem){
-  .hero-bg{top:0;height:100%;width:auto;max-width:none;aspect-ratio:auto;
-    object-position:32% 28%;
-    -webkit-mask-image:linear-gradient(to right,#000 76%,transparent 100%);
-            mask-image:linear-gradient(to right,#000 76%,transparent 100%)}
-  .hero::after{background:none}
+/* Écran en largeur : la vidéo occupe tout l'écran, sans masque ni dégradé. Le texte est
+   posé sur le vrai décor, à droite du personnage, à cheval sur le mur et le frigo.
+   La colonne de texte ne doit jamais empiéter sur la main : celle-ci s'arrête à 53 % de
+   la largeur de l'image affichée, qui est la plus grande de la fenêtre (cover) ou de
+   135 % de sa hauteur (le rapport de la vidéo). D'où le calcul de max-width.
+   En portrait (téléphone, tablette), on reste sur la mise en page empilée plus haut. */
+@media (min-width:52rem) and (min-aspect-ratio:5/4){
+  .hero{align-items:center}
+  .hero-bg{height:100%;object-position:100% 45%;
+    -webkit-mask-image:none;mask-image:none}
+  .hero-inner{padding-top:5rem}
+  .hero-type{max-width:min(33rem,calc(.47 * max(100vw,135vh) - var(--gutter) - 1.5rem))}
 }
 
 /* ───────────── PAGES INTERNES ───────────── */
