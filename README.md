@@ -41,7 +41,7 @@ décor, à droite du personnage. Sur téléphone et tablette en portrait, la vid
 haut et le texte juste en dessous.
 
 Les fichiers `assets/alex-idle.*` (la boucle), `assets/alex-smile.*` (le sourire de la
-fin) et `assets/alex.jpg` (l'image fixe affichée avant la vidéo, ou à sa place si elle
+fin) et `assets/alex.jpg` (l’image fixe affichée avant la vidéo, ou à sa place si elle
 ne se lance pas) sont **fabriqués** par `source/make-hero.py` à partir de l'export
 étalonné rangé dans `source/`. Ne les modifie pas à la main : relance le script.
 
