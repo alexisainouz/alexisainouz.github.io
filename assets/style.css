@@ -43,6 +43,9 @@ a { color:inherit; }
 /* Les deux plans se superposent exactement ; seul l'opacité les départage. */
 .hero-bg.is-smile{opacity:0;transition:opacity .45s ease}
 .hero.is-smiling .hero-bg.is-smile{opacity:1}
+/* Le fondu terminé, on cache la boucle : sinon elle transparaît à travers la zone
+   dégradée du plan « sourire », dès que les deux postures diffèrent. */
+.hero.is-smiling .hero-bg.is-idle{visibility:hidden;transition:visibility 0s .45s}
 @media (prefers-reduced-motion: reduce){.hero-bg.is-smile{transition:none}}
 .hero::after{content:"";position:absolute;inset:0;z-index:-1;
   background:linear-gradient(to top,var(--blue) 0%,var(--blue) 54%,

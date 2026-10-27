@@ -39,6 +39,17 @@ propres images et données à côté de lui, et tu le déplaces ou le supprimes 
 `assets/alex.jpg`, format carré, environ 1200 px de côté, sous 250 Ko. Elle sert
 aussi de vignette quand quelqu'un partage un lien du site sur WhatsApp ou LinkedIn.
 
+## La vidéo d'accueil
+
+Les vidéos `assets/alex-idle.*` (la boucle) et `assets/alex-smile.*` (le sourire de la
+fin) sont fabriquées par `source/make-hero.py` à partir de la vidéo d'origine rangée
+dans `source/`. Le script convertit le HDR de l'iPhone en SDR (sinon l'image est
+délavée), recadre en carré, recale le bleu du mur sur celui du site, et raccorde la
+boucle par un fondu. Les réglages (cadrage, extrait retenu) sont en tête de fichier
+et dans les commandes données dans son en-tête.
+
+Le dossier `source/` n'est pas publié (voir `exclude` dans `_config.yml`).
+
 ## Ne pas toucher
 
 - `CNAME` — rattache le dépôt au domaine. Le supprimer casse le site.

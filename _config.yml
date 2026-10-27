@@ -73,3 +73,4 @@ include:
 
 exclude:
   - README.md
+  - source
