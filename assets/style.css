@@ -79,10 +79,17 @@ a { color:inherit; }
    135 % de sa hauteur (le rapport de la vidéo). D'où le calcul de max-width.
    En portrait (téléphone, tablette), on reste sur la mise en page empilée plus haut. */
 @media (min-width:52rem) and (min-aspect-ratio:5/4){
-  .hero{align-items:center}
-  .hero-bg{height:100%;object-position:100% 45%;
+  /* --t : le haut du texte ET le haut de la tête, au même niveau (environ 21 % de la
+     hauteur de l'écran, moins si le texte ne tiendrait plus en bas : il fait environ
+     42 rem de haut). La vidéo est affichée à la taille « cover » : S = sa hauteur
+     affichée, la tête est à 36 % de cette hauteur. On la décale pour que la tête
+     tombe sur --t, sans jamais découvrir un bord. */
+  .hero{align-items:flex-start;--t:min(21svh,calc(100svh - 42.5rem));
+    --s:max(74vw,100svh)}
+  .hero-bg{height:100%;
+    object-position:100% clamp(calc(100svh - var(--s)),calc(var(--t) - .36 * var(--s)),0px);
     -webkit-mask-image:none;mask-image:none}
-  .hero-inner{padding-top:5rem}
+  .hero-inner{padding-top:max(1.5rem,var(--t))}
   .hero-type{max-width:min(33rem,calc(.47 * max(100vw,135vh) - var(--gutter) - 1.5rem))}
 }
 
