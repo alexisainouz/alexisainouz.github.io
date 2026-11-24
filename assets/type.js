@@ -120,7 +120,7 @@
   // smile = le portrait passe au sourire, pendant que la ligne s'écrit
   const SCRIPT = [
     { t: 'I’m Alexis Gabriel Aïnouz — Alex is fine.' }, { p: 1 },
-    { t: 'I started making ' }, { c: ['pathological', 'obsessive'] },
+    { t: 'I started making ' }, { c: ['obsessive', 'thorough'] },
     { t: ' food films on ' }, { a: [L.yt, 'YouTube'] },
     { t: ', 235 million views ago. Along the way I wrote ' },
     { a: [L.book, 'a bestselling cookbook'] },

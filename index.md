@@ -28,7 +28,7 @@ permalink: /
       <div class="say">
         <p>I’m Alexis Gabriel Aïnouz — Alex is fine.</p>
 
-        <p>I started making obsessive food films on
+        <p>I started making thorough food films on
         <a href="{{ site.links[0].url }}" rel="me noopener" target="_blank">YouTube</a>,
         235 million views ago. Along the way I wrote
         <a href="{{ site.book_url }}" rel="noopener" target="_blank">a bestselling cookbook</a>, and started
