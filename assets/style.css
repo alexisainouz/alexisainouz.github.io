@@ -49,6 +49,18 @@ a { color:inherit; }
    dégradée du plan « sourire », dès que les deux postures diffèrent. */
 .hero.is-smiling .hero-bg.is-idle{visibility:hidden;transition:visibility 0s .45s}
 @media (prefers-reduced-motion: reduce){.hero-bg.is-smile{transition:none}}
+/* Grain : une tuile de bruit (grain.png, 128 px) posée sur la vidéo, en mode « overlay ».
+   Il masque le flou et la compression d'une source en 720p agrandie. Il saute de place
+   dix fois par seconde, comme celui d'une pellicule ; le débord (inset négatif) couvre
+   ces sauts. Intensité : l'opacité. */
+.hero::before{content:"";position:absolute;inset:-64px;z-index:-1;pointer-events:none;
+  background:url(grain.png) 0 0/128px;mix-blend-mode:overlay;opacity:.18;
+  animation:grain .5s steps(1) infinite}
+@keyframes grain{
+  0%{transform:translate(0,0)}        20%{transform:translate(-37px,21px)}
+  40%{transform:translate(23px,-45px)} 60%{transform:translate(-51px,-12px)}
+  80%{transform:translate(14px,48px)}}
+@media (prefers-reduced-motion: reduce){.hero::before{animation:none}}
 .hero-inner{width:100%;max-width:84rem;margin-inline:auto;
   padding:min(94vw,49.5svh) var(--gutter) clamp(2.5rem,6vw,4rem);
   display:flex;justify-content:flex-end}
