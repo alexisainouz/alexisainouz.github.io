@@ -39,7 +39,8 @@ permalink: /
         <a href="{{ site.links[2].url }}" rel="me noopener" target="_blank">entrepreneur</a>
         for more than twenty years. I also
         <a href="{{ site.links_secondary[0].url }}" rel="me noopener" target="_blank">freelance</a>
-        as a creative director, and as a speaker.</p>
+        as a creative director, and as a
+        <a href="{{ '/contact/' | relative_url }}">speaker</a>.</p>
 
         <p><a href="{{ '/contact/' | relative_url }}">Say hello</a> ;)</p>
 

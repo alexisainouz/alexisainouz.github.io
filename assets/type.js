@@ -129,7 +129,7 @@
     { t: ' tools for cooks.' }, { p: 1 },
     { t: 'I have been an ' }, { a: [L.li, 'entrepreneur'] },
     { t: ' for more than twenty years. I also ' }, { a: [L.malt, 'freelance'] },
-    { t: ' as a creative director, and as a speaker.' },
+    { t: ' as a creative director, and as a ' }, { a: [L.contact, 'speaker'] }, { t: '.' },
     { p: 1 },
     { smile: 1 }, { a: [L.contact, 'Say hello'] }, { t: ' ;)' }, { ps: 1 },
     { t: 'PS — yes, ' }, { a: [L.pizza, 'the pizza calculator'] },
