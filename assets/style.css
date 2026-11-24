@@ -81,10 +81,10 @@ a { color:inherit; }
 @media (min-width:52rem) and (min-aspect-ratio:5/4){
   /* --t : le haut du texte ET le haut de la tête, au même niveau (environ 21 % de la
      hauteur de l'écran, moins si le texte ne tiendrait plus en bas : il fait environ
-     42 rem de haut). La vidéo est affichée à la taille « cover » : S = sa hauteur
+     46 rem de haut, marge du bas comprise). La vidéo est affichée à la taille « cover » : S = sa hauteur
      affichée, la tête est à 36 % de cette hauteur. On la décale pour que la tête
      tombe sur --t, sans jamais découvrir un bord. */
-  .hero{align-items:flex-start;--t:min(21svh,calc(100svh - 42.5rem));
+  .hero{align-items:flex-start;--t:min(21svh,calc(100svh - 46rem));
     --s:max(74vw,100svh)}
   .hero-bg{height:100%;
     object-position:100% clamp(calc(100svh - var(--s)),calc(var(--t) - .36 * var(--s)),0px);
